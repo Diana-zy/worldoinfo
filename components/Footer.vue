@@ -20,13 +20,13 @@
           >
             {{ cookiesText[lang] || cookiesText["en"] }}
           </CustomLink>
-          <a href="mailto:service@qufeed.com">
+          <a href="mailto:service@worldoinfo.com">
             {{ contactText[lang] || contactText["en"] }}
           </a>
         </div>
         <span>
           {{ copyRightText1[lang] || copyRightText1["en"] }}
-          ©&nbsp; 2024 QuFeed &nbsp;
+          ©&nbsp; 2024 Worldoinfo &nbsp;
           {{ copyRightText2[lang] || copyRightText2["en"] }}
         </span>
       </div>

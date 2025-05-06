@@ -3,7 +3,7 @@
     <Header />
     <main class="main">
       <h1>Contact Us</h1>
-      <p>Please feel free to contact us at service@qufeed.com </p>
+      <p>Please feel free to contact us at service@worldoinfo.com </p>
     </main>
     <Footer />
   </div>

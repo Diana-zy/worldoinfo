@@ -1,1 +1,1 @@
-#qufeed
+#worldoinfo

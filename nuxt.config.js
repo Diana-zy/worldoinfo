@@ -32,7 +32,7 @@ export default {
     trailingSlash: true
   },
   head: {
-    title: "QuFeed - Global News at Your Fingertips!",
+    title: "Worldoinfo - Global News at Your Fingertips!",
     meta: [
       {
         name: "version",
@@ -66,7 +66,7 @@ export default {
       {
         hid: "og:site_name",
         property: "og:site_name",
-        content: "QuFeed"
+        content: "Worldoinfo"
       }
     ],
     link: [{ rel: "icon", type: "image/x-icon", href: "/favicon.ico" }]
@@ -91,56 +91,18 @@ export default {
   },
   modules: ["@nuxtjs/axios"],
   sitemap: {
-    hostname: "https://qufeed.com/"
+    hostname: "https://worldoinfo.com/"
   },
   pwa: {
     manifest: {
-      name: "QuFeed",
-      short_name: "QuFeed",
+      name: "Worldoinfo",
+      short_name: "Worldoinfo",
       description:
-        "We are committed to delivering you the latest developments in various fields, including politics, economy, technology, culture, sports, and more.!",
-      icons: [
-        {
-          src: "/icons/32.png",
-          sizes: "32x32",
-          type: "image/png"
-        },
-        {
-          src: "/icons/48.png",
-          sizes: "48x48",
-          type: "image/png"
-        },
-        {
-          src: "/icons/72.png",
-          sizes: "72x72",
-          type: "image/png"
-        },
-        {
-          src: "/icons/96.png",
-          sizes: "96x96",
-          type: "image/png"
-        },
-        {
-          src: "/icons/144.png",
-          sizes: "144x144",
-          type: "image/png"
-        },
-        {
-          src: "/icons/192.png",
-          sizes: "192x192",
-          type: "image/png"
-        },
-        {
-          src: "/icons/256.png",
-          sizes: "256x256",
-          type: "image/png"
-        },
-        {
-          src: "/icons/512.png",
-          sizes: "512x512",
-          type: "image/png"
-        }
-      ]
+        "We are committed to delivering you the latest developments in various fields, including politics, economy, technology, culture, sports, and more.!"
+    },
+    icon: {
+      src: "static/icon.png",
+      sizes: [32, 64, 120, 144, 152, 192, 512] // 自定义生成的图标尺寸
     }
   },
   build: {

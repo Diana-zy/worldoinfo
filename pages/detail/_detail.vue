@@ -73,7 +73,7 @@ export default {
       htmlAttrs: {
         lang: this.newInfo.language
       },
-      title: this.newInfo.name + " - QuFeed",
+      title: this.newInfo.name + " - Worldoinfo",
       meta: [
         {
           hid: "description",
@@ -98,7 +98,7 @@ export default {
         {
           hid: "og:url",
           property: "og:url",
-          content: `https://qufeed.com/detail/${this.newInfo.path}/`
+          content: `https://worldoinfo.com/detail/${this.newInfo.path}/`
         },
         {
           hid: "og:locale",
