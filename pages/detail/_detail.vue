@@ -5,7 +5,6 @@
       <h1 class="article-title">{{ newInfo.name }}</h1>
       <div class="news-detail">{{ newInfo.first_paragraph }}</div>
       <div id="relatedsearches1"> </div>
-      <!-- <google-ad-preload class="google-ad-preload" ad-slot="7583463276" /> -->
       <!-- <div class="read-more" :class="{ hide: readMore }" @click="readMore = true">
         {{ readMoreText[newInfo.language] }}
       </div> -->
@@ -118,13 +117,6 @@ export default {
       ]
     };
   },
-  // beforeMount() {
-  //   if (this.newInfo.recommend_words && this.$recKeywords.length > 0) {
-  //     this.detailKeyword = this.newInfo.recommend_words;
-  //   } else {
-  //     this.detailKeyword = this.$recKeywords;
-  //   }
-  // },
   mounted: function () {
     // 获取 URL 查询参数
     const searchParams = new URLSearchParams(window.location.search);

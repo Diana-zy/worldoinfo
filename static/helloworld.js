@@ -29,37 +29,6 @@ window.addEventListener("beforeunload", () => {
 
     if (src.includes("afs/ads?")) {
       if (activeElement.getAttribute("title")) {
-        // 快手 - start
-        try {
-          // 发送数据到服务器
-          fetch("http://www.adsnebula.com/log/common/api", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-              access_token: "KaCL2FLIMBPB4r9c0SsaqDuPb88Bh2XbMrpicO0ULaI",
-              clickid: searchParams.has("click_id") ? searchParams.get("click_id") : "",
-              event_name: "EVENT_ADD_TO_CART",
-              pixelId: "261550727471618",
-              testFlag: false,
-              trackFlag: false, // 测试时为true, 正式投放时为false
-              is_attributed: 1,
-              mmpcode: "PL",
-              pixelSdkVersion: "9.9.9"
-            })
-          });
-        } catch (e) {}
-        // 快手 - end
-
-        /* bigo - start */
-        try {
-          bge("event", "consult", { configId: "904996620715791360" });
-          bge("event", "button", { configId: "904996620715791360" });
-
-          bge("event", "button", { configId: "905019503363724032" });
-        } catch (e) {}
-        /* bigo - end */
         eventName = "T_AR";
         window.arFlag = true;
 
@@ -84,37 +53,6 @@ window.addEventListener("beforeunload", () => {
         eventName = "T_AC";
       }
     } else if (src.includes("afs/ads/i/")) {
-      // 快手 - start
-      try {
-        // 发送数据到服务器
-        fetch("http://www.adsnebula.com/log/common/api", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({
-            access_token: "KaCL2FLIMBPB4r9c0SsaqDuPb88Bh2XbMrpicO0ULaI",
-            clickid: searchParams.has("click_id") ? searchParams.get("click_id") : "",
-            event_name: "EVENT_ADD_TO_CART",
-            pixelId: "261550727471618",
-            testFlag: false,
-            trackFlag: false, // 测试时为true, 正式投放时为false
-            is_attributed: 1,
-            mmpcode: "PL",
-            pixelSdkVersion: "9.9.9"
-          })
-        });
-      } catch (e) {}
-      // 快手 - end
-
-      /* bigo - start */
-      try {
-        bge("event", "consult", { configId: "904996620715791360" });
-        bge("event", "button", { configId: "904996620715791360" });
-
-        bge("event", "button", { configId: "905019503363724032" });
-      } catch (e) {}
-      /* bigo - end */
       eventName = "T_AG";
     } else if (elementUrlIndex !== -1) {
       eventName = "D_RE";
