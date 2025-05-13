@@ -15,6 +15,9 @@
       </div>
       <div id="relatedsearches1"> </div>
       <!-- <google-ad ad-slot="2955836717" /> -->
+      <section class="news-box-2">
+        <news-item-2 v-for="(item, i) in trendingNews" :key="i" :item="item"> </news-item-2>
+      </section>
     </main>
     <Footer />
   </div>
@@ -24,11 +27,31 @@
 import { simulateAFSSearch } from "~/utils/utils";
 
 export default {
+  async asyncData({ $axios, env }) {
+    try {
+      // 并行处理多个异步请求
+      const [trendingNewsResponse] = await Promise.all([
+        $axios.$get("/api/article/menu", {
+          params: {
+            site_id: env.SITE_ID,
+            mod_id: "trending",
+            size: 10
+          }
+        })
+      ]);
+      return {
+        trendingNews: trendingNewsResponse.list
+      };
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  },
   data() {
     return {
       input: "" // 搜索输入
     };
   },
+
   mounted() {
     this.input = this.$route.query.userInput || "";
     this.input && this.searchTerms();
@@ -170,11 +193,23 @@ export default {
   background-size: cover;
 }
 
+.news-box-2 {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 24px;
+}
+
 .small-ad-1 {
   height: 100px;
   max-width: 980px;
   width: 100%;
   margin-bottom: 2em;
+}
+@media screen and (max-width: 1100px) {
+  .news-box-2 {
+    display: flex;
+    flex-wrap: wrap;
+  }
 }
 @media screen and (max-width: 750px) {
   .search-group {
@@ -208,6 +243,10 @@ export default {
     border-radius: vw(8);
     padding: vw(12) vw(16);
     font-size: vw(24);
+  }
+
+  .news-box-2 {
+    gap: vw(32);
   }
   .small-ad-1 {
     display: block;
