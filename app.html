@@ -81,7 +81,25 @@
           const activeElement = document.activeElement;
           const src = activeElement?.getAttribute("src") || "";
           let eventName = "";
-
+          if (
+            window.location.pathname.startsWith("/detail") &&
+            window.location.search.includes("doubleEntries=true")
+          ) {
+            if (
+              src &&
+              src.includes("afs/ads?") &&
+              activeElement.getAttribute("id") === "master-1"
+            ) {
+              dataLayer.push({ event: "T_AC_FIRST" });
+            } else if (
+              src &&
+              src.includes("afs/ads/i/") &&
+              activeElement.getAttribute("id") === "slave-1-1"
+            ) {
+              dataLayer.push({ event: "T_AC_SECOND" });
+              dataLayer.push({ event: "T_AC" });
+            }
+          }
           if (src.includes("afs/ads?")) {
             if (activeElement.getAttribute("title")) {
               eventName = "T_AR";
@@ -101,7 +119,7 @@
             } else {
               eventName = "T_AC";
             }
-          } else if (src.includes("afs/ads/i/")) {
+          } else if (src.includes("afs/ads/i/") && !window.location.pathname.startsWith("/detail")) {
             eventName = "T_AG";
           }
 
