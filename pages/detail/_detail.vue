@@ -105,7 +105,6 @@ export default {
   },
   computed: {
     contentItems() {
-      const self = this;
       const parts = this.newInfo.content.split(/(<p[^>]*>.*?<\/p>)/gs);
       let charCount = 0;
       const items = [];
@@ -129,7 +128,7 @@ export default {
         // 计算纯文本长度
         const textContent = part.replace(/<[^>]+>/g, "");
         charCount += textContent.length;
-        if (charCount >= splitNum && self.$route.query.doubleEntries === "true") {
+        if (charCount >= splitNum) {
           items.push({
             type: "ad"
           });
@@ -172,7 +171,6 @@ export default {
   },
   methods: {
     addAdSenseScript() {
-      const self = this;
       console.log("addAdSenseScript", this.newInfo.terms);
       // 获取 URL 查询参数
       const searchParams = new URLSearchParams(window.location.search);
@@ -192,9 +190,7 @@ export default {
         adsafe: "low",
         ignoredPageParams,
         relatedSearchTargeting: "content",
-        resultsPageBaseUrl: `${window.location.origin}/search/?afs&channel=${this.channelId}${
-          self.$route.query?.doubleEntries === "true" ? "&doubleEntries=true" : ""
-        }`,
+        resultsPageBaseUrl: `${window.location.origin}/search/?afs&channel=${this.channelId}`,
         resultsPageQueryParam: "query",
         terms: terms || this.newInfo.terms,
         referrerAdCreative: terms || this.newInfo.referrer_ad_creative,
@@ -211,9 +207,7 @@ export default {
           relatedSearchTargeting: "query",
           query: terms ? terms.split(",")[0] : this.newInfo.terms.split(",")[0],
           ivt: false,
-          resultsPageBaseUrl: `${window.location.origin}/search/?afs&channel=${this.channelId}${
-            self.$route.query?.doubleEntries === "true" ? "&doubleEntries=true" : ""
-          }`,
+          resultsPageBaseUrl: `${window.location.origin}/search/?afs&channel=${this.channelId}`,
           resultsPageQueryParam: "query"
         };
       }
@@ -225,7 +219,7 @@ export default {
         adSenseConfig,
         {
           container: "relatedsearches1", // 广告容器 ID
-          relatedSearches: self.$route.query.doubleEntries === "true" ? 5 : 10, // 相关搜索广告数量
+          relatedSearches: 5, // 相关搜索广告数量
           adLoadedCallback: function (loaded, response, isExperimentVariant, callbackOptions) {
             console.log("adLoadedCallback", loaded, response, isExperimentVariant, callbackOptions);
             if (response) {
@@ -247,7 +241,7 @@ export default {
                 dataLayer.push({
                   event: "C_AC_IN",
                   num: result,
-                  queryNum: self.$route.query.doubleEntries === "true" ? 5 : 10,
+                  queryNum: 5,
                   key1: numberOfKeys,
                   key2: concatenatedKeys
                 }); // 事件推送到 dataLayer
@@ -257,7 +251,7 @@ export default {
             }
           }
         },
-        self.$route.query?.doubleEntries === "true" && {
+        {
           container: "relatedsearches2", // 广告容器 ID
           relatedSearches: 5, // 相关搜索广告数量
           adLoadedCallback: function (loaded, response, isExperimentVariant, callbackOptions) {
