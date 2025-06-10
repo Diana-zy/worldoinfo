@@ -68,7 +68,73 @@
       ></iframe
     ></noscript>
     <!-- End Google Tag Manager (noscript) -->
+    <script src="/linkMarking.js"></script>
     {{ APP }}
-    <script src="/runtimer.js"></script>
+    <script>
+      /* eslint-disable no-undef */
+      window.pageLoadTime = performance.now();
+      window.done = false;
+
+      window.addEventListener("beforeunload", () => {
+        if (!window.done) {
+          // 处理 AFS 广告埋点逻辑
+          const activeElement = document.activeElement;
+          const src = activeElement?.getAttribute("src") || "";
+          let eventName = "";
+
+          if (src.includes("afs/ads?")) {
+            if (activeElement.getAttribute("title")) {
+              eventName = "T_AR";
+              window.arFlag = true;
+
+              const clickTime = performance.now();
+              const timeElapsed = clickTime - window.pageLoadTime;
+              if (timeElapsed > 3000) {
+                dataLayer.push({ event: "AR_3" });
+              } else if (timeElapsed > 2000) {
+                dataLayer.push({ event: "AR_2" });
+              } else if (timeElapsed > 1000) {
+                dataLayer.push({ event: "AR_1" });
+              } else {
+                dataLayer.push({ event: "AR_0" });
+              }
+            } else {
+              eventName = "T_AC";
+            }
+          } else if (src.includes("afs/ads/i/")) {
+            eventName = "T_AG";
+          }
+
+          if (eventName) {
+            dataLayer.push({ event: eventName });
+            window.done = true;
+          }
+        }
+      });
+
+      // 监听失去焦点事件
+      window.addEventListener("blur", () => {
+        const activeElement = document.activeElement;
+        const sourceAttribute = activeElement.getAttribute("src");
+
+        // afs埋点
+        if (sourceAttribute && sourceAttribute.includes("afs/ads?")) {
+          if (activeElement.getAttribute("title")) {
+            dataLayer.push({ event: "D_AR" });
+          } else {
+            dataLayer.push({ event: "D_AC" });
+          }
+        }
+      });
+
+      window.addEventListener("visibilitychange", () => {
+        if (document.visibilityState === "visible") {
+          setTimeout(() => {
+            window.done = false;
+            document.body.focus();
+          }, 0);
+        }
+      });
+    </script>
   </body>
 </html>

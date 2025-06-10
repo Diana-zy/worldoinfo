@@ -29,6 +29,11 @@ export default {
     };
   },
   mounted() {
+    if (window.getDetailIsClickAc()) {
+      window.dataLayer.push({
+        event: "S_PL"
+      });
+    }
     window.location.hostname.includes("s.") && (this.subdomain = true);
     this.hide = false;
 
@@ -95,6 +100,11 @@ export default {
           if (e) {
             // eslint-disable-next-line no-undef
             dataLayer.push({ event: "C_AR" });
+            if (window.getDetailIsClickAc()) {
+              window.dataLayer.push({
+                event: "C_AR_C"
+              });
+            }
             try {
               const element = document.getElementById("master-1");
               const height = parseFloat(element.style.height);

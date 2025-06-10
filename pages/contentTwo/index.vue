@@ -68,7 +68,6 @@ export default {
       // 获取 URL 查询参数
       const searchParams = new URLSearchParams(window.location.search);
       const channelId = searchParams.has("channel") ? searchParams.get("channel") : null;
-      const clickId = searchParams.has("click_id") ? searchParams.get("click_id") : "";
 
       // 配置 AdSense 参数
       const adSenseConfig = {
@@ -76,11 +75,7 @@ export default {
         pubId: "partner-pub-1853000876464912",
         styleId: "3911226554",
         adsafe: "low",
-        resultsPageBaseUrl: `${
-          window.location.origin
-        }/search/?afs&from=content&partner_param=param&channel=${channelId}${
-          clickId && `&click_id=${clickId}`
-        }`,
+        resultsPageBaseUrl: `${window.location.origin}/search/?afs&from=content&partner_param=param&channel=${channelId}`,
         resultsPageQueryParam: "query",
         query: `${this.input}`,
         ivt: false,
@@ -112,6 +107,7 @@ export default {
               // eslint-disable-next-line no-undef
               dataLayer.push({
                 event: "C_AC_IN",
+                queryNum: 18,
                 num: result,
                 key1: numberOfKeys,
                 key2: concatenatedKeys
