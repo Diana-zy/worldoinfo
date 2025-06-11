@@ -1,21 +1,4 @@
 /* Cookie 操作 */
-function getMainDomain() {
-  const url = window.location.hostname; // 获取当前主机名
-  const parts = url.split("."); // 按点分割
-  if (parts.length > 2) {
-    // 当主机名有子域时，取最后两个部分
-    return parts.slice(-2).join("."); // 返回主域名
-  }
-  return url; // 没有子域时直接返回当前主机名
-}
-
-function setCookie(name, value, daysToExpire = 1) {
-  const date = new Date();
-  date.setTime(date.getTime() + daysToExpire * 24 * 60 * 60 * 1000); // 设置过期时间为指定的天数之后
-  const expires = "; expires=" + date.toUTCString(); // 转换为GMT格式的字符串
-  document.cookie = name + "=" + (value || "") + expires + "; path=/; domain=" + getMainDomain(); // 设置cookie
-}
-
 function getCookie(name) {
   const nameEQ = name + "=";
   const ca = document.cookie.split(";");
@@ -50,7 +33,16 @@ window.addEventListener("blur", () => {
           timestamp: Date.now()
         })
       );
-      setCookie("hi_act_chain", cipherText);
+      window.setCookie("hi_act_chain", cipherText);
     }
   }
 });
+// eslint-disable-next-line no-unused-vars
+function pushEventParamsToGtm(eventName, ttclid) {
+  window.dataLayer.push({
+    event: eventName,
+    hi_country: window.youknowwho_ip_country || "unknown",
+    hi_ip: window.youknowwho_ip || "unknown",
+    hi_ttclid: ttclid || window.getCookie("hi_ttclid") || "unknown"
+  });
+}

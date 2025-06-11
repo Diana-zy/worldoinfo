@@ -123,7 +123,8 @@ export default {
           console.log("adLoadedCallback", loaded, response, isExperimentVariant, callbackOptions);
           if (response) {
             // eslint-disable-next-line no-undef
-            dataLayer.push({ event: "C_AC" }); // 事件推送到 dataLayer
+            // dataLayer.push({ event: "C_AC" }); // 事件推送到 dataLayer
+            window.pushEventParamsToGtm("C_AC");
             try {
               let numberOfKeys = 0;
               let concatenatedKeys = "miss";

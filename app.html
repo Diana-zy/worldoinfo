@@ -4,6 +4,41 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
     {{ HEAD }}
+    <script>
+      /* Cookie 操作 */
+      function getMainDomain() {
+        const url = window.location.hostname; // 获取当前主机名
+        const parts = url.split("."); // 按点分割
+        if (parts.length > 2) {
+          // 当主机名有子域时，取最后两个部分
+          return parts.slice(-2).join("."); // 返回主域名
+        }
+        return url; // 没有子域时直接返回当前主机名
+      }
+
+      function setCookie(name, value, daysToExpire = 1) {
+        const date = new Date();
+        date.setTime(date.getTime() + daysToExpire * 24 * 60 * 60 * 1000); // 设置过期时间为指定的天数之后
+        const expires = "; expires=" + date.toUTCString(); // 转换为GMT格式的字符串
+        document.cookie = name + "=" + (value || "") + expires + "; path=/; domain=" + getMainDomain(); // 设置cookie
+      }
+      const searchParams = new URLSearchParams(window.location.search);
+      const ttclid =searchParams.get("ttclid");
+      if (ttclid) {
+        window.setCookie("hi_ttclid", ttclid);
+      }
+      const script = document.createElement("script");
+      script.src = "https://wc.bunchthings.com/youknowwho.js?" + Date.now();
+      document.head.appendChild(script);
+      script.onload = function () {
+        const pathname = window.location.pathname;
+        if(pathname.startsWith("/detail")){
+          window.pushEventParamsToGtm('D_PV',ttclid);
+        } else if(pathname.startsWith('/search/')){
+          window.pushEventParamsToGtm('S_PV',ttclid);
+        }
+      }
+    </script>
     <script async="async" src="https://www.google.com/adsense/search/ads.js"></script>
     <script type="text/javascript" charset="utf-8">
       (function (g, o) {
@@ -96,7 +131,8 @@
               activeElement.getAttribute("id") === "slave-1-1"
             ) {
               dataLayer.push({ event: "T_AC_SECOND" });
-              dataLayer.push({ event: "T_AC" });
+              // dataLayer.push({ event: "T_AC" });
+              window.pushEventParamsToGtm("T_AC");
             }
           }
           if (src.includes("afs/ads?")) {
@@ -123,7 +159,8 @@
           }
 
           if (eventName) {
-            dataLayer.push({ event: eventName });
+            // dataLayer.push({ event: eventName });
+            window.pushEventParamsToGtm(eventName);
             window.done = true;
           }
         }
