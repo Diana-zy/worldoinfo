@@ -53,7 +53,7 @@ export default {
       this.setChannelId();
       /* 确保dom更新后调用广告请求 */
       this.$nextTick(() => {
-        this.addAdSenseScript();
+        this.newInfo.no_entry !== 1 && this.addAdSenseScript();
       });
     },
     setChannelId() {
@@ -85,7 +85,7 @@ export default {
       }
       const ignoredPageParams = paramKeys.join(",");
 
-      let adSenseConfig = {
+      const adSenseConfig = {
         channel: this.channelId,
         pubId: "partner-pub-1853000876464912",
         styleId: "3911226554",
@@ -99,20 +99,6 @@ export default {
         ivt: false,
         adtest: "off"
       };
-      if (window.location.hostname.includes("s.")) {
-        adSenseConfig = {
-          channel: this.channelId,
-          pubId: "partner-pub-1853000876464912",
-          styleId: "3911226554",
-          adsafe: "low",
-          ignoredPageParams,
-          relatedSearchTargeting: "query",
-          query: terms ? terms.split(",")[0] : this.newInfo.terms.split(",")[0],
-          ivt: false,
-          resultsPageBaseUrl: `${window.location.origin}/search/?afs&channel=${this.channelId}`,
-          resultsPageQueryParam: "query"
-        };
-      }
 
       // 初始化 _googCsa 并加载相关搜索广告
       // eslint-disable-next-line no-undef
