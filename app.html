@@ -4,6 +4,25 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
     {{ HEAD }}
+    <!-- Taboola Pixel Code -->
+    <script type="text/javascript">
+      window._tfa = window._tfa || [];
+      window._tfa.push({ notify: "event", name: "page_view", id: 1891183 });
+      !(function (t, f, a, x) {
+        if (!document.getElementById(x)) {
+          t.async = 1;
+          t.src = a;
+          t.id = x;
+          f.parentNode.insertBefore(t, f);
+        }
+      })(
+        document.createElement("script"),
+        document.getElementsByTagName("script")[0],
+        "//cdn.taboola.com/libtrc/unip/1891183/tfa.js",
+        "tb_tfa_script"
+      );
+    </script>
+    <!-- End of Taboola Pixel Code -->
     <script>
       /* Cookie 操作 */
       function getMainDomain() {
@@ -20,10 +39,11 @@
         const date = new Date();
         date.setTime(date.getTime() + daysToExpire * 24 * 60 * 60 * 1000); // 设置过期时间为指定的天数之后
         const expires = "; expires=" + date.toUTCString(); // 转换为GMT格式的字符串
-        document.cookie = name + "=" + (value || "") + expires + "; path=/; domain=" + getMainDomain(); // 设置cookie
+        document.cookie =
+          name + "=" + (value || "") + expires + "; path=/; domain=" + getMainDomain(); // 设置cookie
       }
       const searchParams = new URLSearchParams(window.location.search);
-      const ttclid =searchParams.get("ttclid");
+      const ttclid = searchParams.get("ttclid");
       if (ttclid) {
         window.setCookie("hi_ttclid", ttclid);
       }
@@ -32,12 +52,12 @@
       document.head.appendChild(script);
       script.onload = function () {
         const pathname = window.location.pathname;
-        if(pathname.startsWith("/detail")){
-          window.pushEventParamsToGtm('D_PV',ttclid);
-        } else if(pathname.startsWith('/search/')){
-          window.pushEventParamsToGtm('S_PV',ttclid);
+        if (pathname.startsWith("/detail")) {
+          window.pushEventParamsToGtm("D_PV", ttclid);
+        } else if (pathname.startsWith("/search/")) {
+          window.pushEventParamsToGtm("S_PV", ttclid);
         }
-      }
+      };
     </script>
     <script async="async" src="https://www.google.com/adsense/search/ads.js"></script>
     <script type="text/javascript" charset="utf-8">
@@ -49,6 +69,30 @@
           }),
           (g[o]["t"] = 1 * new Date());
       })(window, "_googCsa");
+    </script>
+
+    <script
+      async
+      src="https://fundingchoicesmessages.google.com/i/pub-1853000876464912?ers=1"
+    ></script>
+    <script>
+      (function () {
+        function signalGooglefcPresent() {
+          if (!window.frames["googlefcPresent"]) {
+            if (document.body) {
+              const iframe = document.createElement("iframe");
+              iframe.style =
+                "width: 0; height: 0; border: none; z-index: -1000; left: -1000px; top: -1000px;";
+              iframe.style.display = "none";
+              iframe.name = "googlefcPresent";
+              document.body.appendChild(iframe);
+            } else {
+              setTimeout(signalGooglefcPresent, 0);
+            }
+          }
+        }
+        signalGooglefcPresent();
+      })();
     </script>
 
     <!-- Google tag (gtag.js) -->
@@ -109,6 +153,7 @@
       /* eslint-disable no-undef */
       window.pageLoadTime = performance.now();
       window.done = false;
+      window.done1 = false;
 
       window.addEventListener("beforeunload", () => {
         if (!window.done) {
@@ -116,9 +161,7 @@
           const activeElement = document.activeElement;
           const src = activeElement?.getAttribute("src") || "";
           let eventName = "";
-          if (
-            window.location.pathname.startsWith("/detail")
-          ) {
+          if (window.location.pathname.startsWith("/detail")) {
             if (
               src &&
               src.includes("afs/ads?") &&
@@ -137,24 +180,17 @@
           }
           if (src.includes("afs/ads?")) {
             if (activeElement.getAttribute("title")) {
-              eventName = "T_AR";
-              window.arFlag = true;
+              window._tfa = window._tfa || [];
+              window._tfa.push({ notify: "event", name: "make_purchase", id: 1891183 });
 
-              const clickTime = performance.now();
-              const timeElapsed = clickTime - window.pageLoadTime;
-              if (timeElapsed > 3000) {
-                dataLayer.push({ event: "AR_3" });
-              } else if (timeElapsed > 2000) {
-                dataLayer.push({ event: "AR_2" });
-              } else if (timeElapsed > 1000) {
-                dataLayer.push({ event: "AR_1" });
-              } else {
-                dataLayer.push({ event: "AR_0" });
-              }
+              eventName = "T_AR";
             } else {
               eventName = "T_AC";
             }
-          } else if (src.includes("afs/ads/i/") && !window.location.pathname.startsWith("/detail")) {
+          } else if (
+            src.includes("afs/ads/i/") &&
+            !window.location.pathname.startsWith("/detail")
+          ) {
             eventName = "T_AG";
           }
 
@@ -185,8 +221,33 @@
         if (document.visibilityState === "visible") {
           setTimeout(() => {
             window.done = false;
+            window.done1 = false;
             document.body.focus();
           }, 0);
+        }
+      });
+
+      function HandleMessageTACANDTAR(e) {
+        if (window.done1) {
+          return;
+        }
+        const activeElement = document.activeElement;
+        const src = activeElement?.getAttribute("src") || "";
+        if (src.includes("afs/ads?")) {
+          if (!activeElement.getAttribute("title")) {
+            window._tfa = window._tfa || [];
+            window._tfa.push({ notify: "event", name: "add_to_wishlist", id: 1891183 });
+
+            dataLayer.push({ event: "T_AC_MSG" });
+            window.done1 = true;
+          }
+        }
+      }
+
+      //TAC和TAR埋点监听消息
+      window.addEventListener("message", (e) => {
+        if (typeof e.data === "string" && e?.data?.startsWith("FSXDC,.aCS:")) {
+          HandleMessageTACANDTAR();
         }
       });
     </script>

@@ -44,6 +44,10 @@ export default {
   methods: {
     addAdSense() {
       setTimeout(() => {
+        window._tfa = window._tfa || [];
+        window._tfa.push({ notify: "event", name: "view_content", id: 1891183 });
+
+        window.pushEventParamsToGtm("Q_AR");
         this.addAdSenseScript();
       }, 0);
     },
@@ -99,7 +103,9 @@ export default {
         adLoadedCallback: (loaded, e) => {
           if (e) {
             // eslint-disable-next-line no-undef
-            // dataLayer.push({ event: "C_AR" });
+            window._tfa = window._tfa || [];
+            window._tfa.push({ notify: "event", name: "start_checkout", id: 1891183 });
+
             window.pushEventParamsToGtm("C_AR");
             if (window.getDetailIsClickAc()) {
               window.dataLayer.push({

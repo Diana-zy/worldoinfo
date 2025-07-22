@@ -124,6 +124,9 @@ export default {
           if (response) {
             // eslint-disable-next-line no-undef
             // dataLayer.push({ event: "C_AC" }); // 事件推送到 dataLayer
+            window._tfa = window._tfa || [];
+            window._tfa.push({ notify: "event", name: "lead", id: 1891183 });
+
             window.pushEventParamsToGtm("C_AC");
             try {
               let numberOfKeys = 0;
