@@ -241,6 +241,16 @@
             dataLayer.push({ event: "T_AC_MSG" });
             window.done1 = true;
           }
+        }else if (
+          src &&
+          src.includes("afs/ads/i/") &&
+          activeElement.getAttribute("id") === "slave-1-1" &&
+          window.location.pathname.startsWith("/detail")
+        ){
+          window._tfa = window._tfa || [];
+          window._tfa.push({ notify: "event", name: "add_to_wishlist", id: 1891183 });
+          dataLayer.push({ event: "T_AC_MSG" });
+          window.done1 = true;
         }
       }
 
