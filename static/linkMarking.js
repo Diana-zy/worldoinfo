@@ -1,4 +1,13 @@
 /* Cookie 操作 */
+function getMainDomain() {
+  const url = window.location.hostname;
+  const parts = url.split(".");
+  if (parts.length > 2) {
+    return parts.slice(-2).join(".");
+  }
+  return url;
+}
+
 function getCookie(name) {
   const nameEQ = name + "=";
   const ca = document.cookie.split(";");
@@ -8,6 +17,13 @@ function getCookie(name) {
     if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length, c.length);
   }
   return null;
+}
+
+function setCookie(name, value, daysToExpire = 1) {
+  const date = new Date();
+  date.setTime(date.getTime() + daysToExpire * 24 * 60 * 60 * 1000);
+  const expires = "; expires=" + date.toUTCString();
+  document.cookie = name + "=" + (value || "") + expires + "; path=/; domain=" + getMainDomain();
 }
 
 // eslint-disable-next-line no-unused-vars
@@ -33,7 +49,7 @@ window.addEventListener("blur", () => {
           timestamp: Date.now()
         })
       );
-      window.setCookie("hi_act_chain", cipherText);
+      setCookie("hi_act_chain", cipherText);
     }
   }
 });

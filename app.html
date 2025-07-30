@@ -23,34 +23,25 @@
       );
     </script>
     <!-- End of Taboola Pixel Code -->
+    <script src="/linkMarking.js"></script>
     <script>
-      /* Cookie 操作 */
-      function getMainDomain() {
-        const url = window.location.hostname; // 获取当前主机名
-        const parts = url.split("."); // 按点分割
-        if (parts.length > 2) {
-          // 当主机名有子域时，取最后两个部分
-          return parts.slice(-2).join("."); // 返回主域名
-        }
-        return url; // 没有子域时直接返回当前主机名
-      }
-
-      function setCookie(name, value, daysToExpire = 1) {
-        const date = new Date();
-        date.setTime(date.getTime() + daysToExpire * 24 * 60 * 60 * 1000); // 设置过期时间为指定的天数之后
-        const expires = "; expires=" + date.toUTCString(); // 转换为GMT格式的字符串
-        document.cookie =
-          name + "=" + (value || "") + expires + "; path=/; domain=" + getMainDomain(); // 设置cookie
-      }
       const searchParams = new URLSearchParams(window.location.search);
-      const ttclid = searchParams.get("ttclid");
-      if (ttclid) {
-        window.setCookie("hi_ttclid", ttclid);
-      }
+      const ttclid = searchParams.get("ttclid"); //TikTok
+      const tblci = searchParams.get("tblci"); //Taboola
+      ttclid && window.setCookie("hi_ttclid", ttclid);
+      tblci && window.setCookie("hi_tblci", tblci);
+
       const script = document.createElement("script");
       script.src = "https://wc.bunchthings.com/youknowwho.js?" + Date.now();
       document.head.appendChild(script);
       script.onload = function () {
+        window.dataLayer = window.dataLayer || [];
+        window.dataLayer.push({
+          event: "Page_View_Ip",
+          hi_ip: window.youknowwho_ip || "unknown",
+          hi_country: window.youknowwho_ip_country || "unknown"
+        });
+
         const pathname = window.location.pathname;
         if (pathname.startsWith("/detail")) {
           window.pushEventParamsToGtm("D_PV", ttclid);
@@ -123,7 +114,6 @@
       ></iframe
     ></noscript>
     <!-- End Google Tag Manager (noscript) -->
-    <script src="/linkMarking.js"></script>
     {{ APP }}
     <script>
       /* eslint-disable no-undef */
