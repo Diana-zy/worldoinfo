@@ -182,6 +182,15 @@ export default {
       }
       const ignoredPageParams = paramKeys.join(",");
 
+      const channelId = window.getParam("channel");
+      const hiSource = window.getParam("hi_source");
+      const hiPc = window.getParam("hi_pc");
+      const resultsPageBaseUrl = window.getResultsPageUrl({
+        channel: channelId,
+        from: "detail",
+        hi_source: hiSource,
+        hi_pc: hiPc
+      });
       const adSenseConfig = {
         channel: this.channelId,
         pubId: "partner-pub-1853000876464912",
@@ -189,7 +198,7 @@ export default {
         adsafe: "low",
         ignoredPageParams,
         relatedSearchTargeting: "content",
-        resultsPageBaseUrl: `${window.location.origin}/search/?afs&channel=${this.channelId}`,
+        resultsPageBaseUrl,
         resultsPageQueryParam: "query",
         terms: terms || this.newInfo.terms,
         referrerAdCreative: terms || this.newInfo.referrer_ad_creative,
@@ -212,6 +221,7 @@ export default {
               // dataLayer.push({ event: "C_AC" }); // 事件推送到 dataLayer
               window._tfa = window._tfa || [];
               window._tfa.push({ notify: "event", name: "lead", id: 1891183 });
+              // window.trackEventToPixel("D_C_AC");
 
               window.pushEventParamsToGtm("C_AC");
               try {

@@ -23,6 +23,7 @@
       );
     </script>
     <!-- End of Taboola Pixel Code -->
+    <script src="/trackEvent.js"></script>
     <script src="/linkMarking.js"></script>
     <script>
       const searchParams = new URLSearchParams(window.location.search);
@@ -140,7 +141,6 @@
               activeElement.getAttribute("id") === "slave-1-1"
             ) {
               dataLayer.push({ event: "T_AC_SECOND" });
-              // dataLayer.push({ event: "T_AC" });
               window.pushEventParamsToGtm("T_AC");
             }
           }
@@ -149,6 +149,7 @@
               window._tfa = window._tfa || [];
               window._tfa.push({ notify: "event", name: "make_purchase", id: 1891183 });
 
+              // window.trackEventToPixel("T_AR");
               eventName = "T_AR";
             } else {
               eventName = "T_AC";
@@ -161,7 +162,6 @@
           }
 
           if (eventName) {
-            // dataLayer.push({ event: eventName });
             window.pushEventParamsToGtm(eventName);
             window.done = true;
           }
@@ -203,6 +203,7 @@
           if (!activeElement.getAttribute("title")) {
             window._tfa = window._tfa || [];
             window._tfa.push({ notify: "event", name: "add_to_wishlist", id: 1891183 });
+            // window.trackEventToPixel("T_AC_MSG");
 
             dataLayer.push({ event: "T_AC_MSG" });
             window.done1 = true;
@@ -215,6 +216,8 @@
         ) {
           window._tfa = window._tfa || [];
           window._tfa.push({ notify: "event", name: "add_to_wishlist", id: 1891183 });
+          // window.trackEventToPixel("T_AC_MSG");
+
           dataLayer.push({ event: "T_AC_MSG" });
           window.done1 = true;
         }

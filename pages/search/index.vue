@@ -38,6 +38,7 @@ export default {
       setTimeout(() => {
         window._tfa = window._tfa || [];
         window._tfa.push({ notify: "event", name: "view_content", id: 1891183 });
+        //  window.trackEventToPixel("Q_AR");
 
         window.pushEventParamsToGtm("Q_AR");
         this.addAdSenseScript();
@@ -57,14 +58,16 @@ export default {
     },
     addAdSenseScript() {
       const queryString = this.input;
-      const searchParams = new URLSearchParams(window.location.search);
 
-      // 获取 URL 查询参数的工具函数
-      const getParam = (key) => (searchParams.has(key) ? searchParams.get(key) : "");
-
-      const from = getParam("from");
-      const channelId = getParam("channel");
-
+      const channelId = window.getParam("channel");
+      const hiSource = window.getParam("hi_source");
+      const hiPc = window.getParam("hi_pc");
+      const resultsPageBaseUrl = window.getResultsPageUrl({
+        channel: channelId,
+        from: "search",
+        hi_source: hiSource,
+        hi_pc: hiPc
+      });
       // 配置 AdSense 参数
       const adSenseConfig = {
         channel: channelId,
@@ -73,9 +76,7 @@ export default {
         styleId: "3911226554",
         adsafe: "low",
         ivt: false,
-        resultsPageBaseUrl: `${window.location.origin}/search/?afs&channel=${channelId}${
-          from ? `&from=${from}` : ""
-        }`,
+        resultsPageBaseUrl,
         resultsPageQueryParam: "query"
       };
 
@@ -97,6 +98,7 @@ export default {
             // eslint-disable-next-line no-undef
             window._tfa = window._tfa || [];
             window._tfa.push({ notify: "event", name: "start_checkout", id: 1891183 });
+            // window.trackEventToPixel("C_AR");
 
             window.pushEventParamsToGtm("C_AR");
             if (window.getDetailIsClickAc()) {
