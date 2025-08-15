@@ -88,57 +88,140 @@ const initPixels = {
       `//cdn.taboola.com/libtrc/unip/${pixelId}/tfa.js`,
       "tb_tfa_script"
     );
+  },
+  outbrain: function (pixelId) {
+    /** DO NOT MODIFY THIS CODE**/
+    !(function (_window, _document) {
+      var OB_ADV_ID = pixelId;
+      if (_window.obApi) {
+        var toArray = function (object) {
+          return Object.prototype.toString.call(object) === "[object Array]" ? object : [object];
+        };
+        _window.obApi.marketerId = toArray(_window.obApi.marketerId).concat(toArray(OB_ADV_ID));
+        return;
+      }
+      var api = (_window.obApi = function () {
+        api.dispatch ? api.dispatch.apply(api, arguments) : api.queue.push(arguments);
+      });
+      api.version = "1.1";
+      api.loaded = true;
+      api.marketerId = OB_ADV_ID;
+      api.queue = [];
+      var tag = _document.createElement("script");
+      tag.async = true;
+      tag.src = "//amplify.outbrain.com/cp/obtp.js";
+      tag.type = "text/javascript";
+      var script = _document.getElementsByTagName("script")[0];
+      script.parentNode.insertBefore(tag, script);
+    })(window, document);
+
+    if (window.location.pathname.startsWith("/detail")) {
+      window.obApi("track", "PAGE_VIEW");
+    }
+  },
+  pinterest: function (pixelId) {
+    !(function (e) {
+      if (!window.pintrk) {
+        window.pintrk = function () {
+          window.pintrk.queue.push(Array.prototype.slice.call(arguments));
+        };
+        var n = window.pintrk;
+        (n.queue = []), (n.version = "3.0");
+        var t = document.createElement("script");
+        (t.async = !0), (t.src = e);
+        var r = document.getElementsByTagName("script")[0];
+        r.parentNode.insertBefore(t, r);
+      }
+    })("https://s.pinimg.com/ct/core.js");
+    window.pintrk("load", pixelId, { em: "<user_email_address>" });
+    window.pintrk("page");
+  },
+  facebook: function (pixelId) {
+    !(function (f, b, e, v, n, t, s) {
+      if (f.fbq) return;
+      n = f.fbq = function () {
+        n.callMethod ? n.callMethod.apply(n, arguments) : n.queue.push(arguments);
+      };
+      if (!f._fbq) f._fbq = n;
+      n.push = n;
+      n.loaded = !0;
+      n.version = "2.0";
+      n.queue = [];
+      t = b.createElement(e);
+      t.async = !0;
+      t.src = v;
+      s = b.getElementsByTagName(e)[0];
+      s.parentNode.insertBefore(t, s);
+    })(window, document, "script", "https://connect.facebook.net/en_US/fbevents.js");
+    window.fbq("init", pixelId);
+    window.fbq("track", "PageView");
   }
 };
 
-// (function () {
-//   const source = getParam("hi_source"),
-//     pixelId = getParam("hi_pc");
-//   if (source && initPixels[source]) initPixels[source](pixelId);
-// })();
+(function () {
+  const source = getParam("hi_source"),
+    pixelId = getParam("hi_pc");
+  if (source && initPixels[source]) initPixels[source](pixelId);
+})();
 
 function trackEventToPixel(eventKey) {
   const eventNameObj = {
     // 触发词条
     D_C_AC: {
       taboola: "lead",
-      tiktok: "Lead"
+      tiktok: "Lead",
+      outbrain: "Lead",
+      pinterest: "lead",
+      facebook: "Lead"
     },
     // 点击词条
     T_AC_MSG: {
       taboola: "add_to_wishlist",
-      tiktok: "AddToWishlist"
+      tiktok: "AddToWishlist",
+      outbrain: "Add to cart",
+      pinterest: "initiatecheckout",
+      facebook: "AddToWishlist"
     },
     // 请求广告
     Q_AR: {
       taboola: "view_content",
-      tiktok: "ViewContent"
+      tiktok: "ViewContent",
+      outbrain: "Content view",
+      pinterest: "viewcategory",
+      facebook: "ViewContent"
     },
     // 触发广告
     C_AR: {
       taboola: "start_checkout",
-      tiktok: "Download"
+      tiktok: "Download",
+      outbrain: "Download",
+      pinterest: "signup",
+      facebook: "InitiateCheckout"
     },
     // 点击广告
     T_AR: {
       taboola: "make_purchase",
-      tiktok: "Purchase"
-    },
-    // 点击广告2
-    T_AR_2: {
-      taboola: "",
-      tiktok: "ClickButton"
+      tiktok: "Purchase",
+      outbrain: "Purchase",
+      pinterest: "checkout",
+      facebook: "Purchase"
     }
   };
 
   const source = getParam("hi_source"),
-    pixelId = getParam("hi_pc"),
     eventName = eventNameObj[eventKey][source];
+  let pixelId = getParam("hi_pc");
   if (source && pixelId && eventName) {
     if (source === "taboola") {
       window._tfa.push({ notify: "event", name: eventName, id: pixelId });
     } else if (source === "tiktok") {
-      window.ttq?.track?.(eventName);
+      window.ttq?.instance(pixelId)?.track?.(eventName);
+    } else if (source === "outbrain") {
+      window.obApi?.("track", eventName);
+    } else if (source === "pinterest") {
+      window.pintrk?.("track", eventName);
+    } else if (source === "facebook") {
+      window.fbq?.("track", eventName);
     }
   }
 }

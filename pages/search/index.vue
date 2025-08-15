@@ -36,9 +36,9 @@ export default {
   methods: {
     addAdSense() {
       setTimeout(() => {
-        window._tfa = window._tfa || [];
-        window._tfa.push({ notify: "event", name: "view_content", id: 1891183 });
-        //  window.trackEventToPixel("Q_AR");
+        // window._tfa = window._tfa || [];
+        // window._tfa.push({ notify: "event", name: "view_content", id: 1891183 });
+        window.trackEventToPixel("Q_AR");
 
         window.pushEventParamsToGtm("Q_AR");
         this.addAdSenseScript();
@@ -62,9 +62,10 @@ export default {
       const channelId = window.getParam("channel");
       const hiSource = window.getParam("hi_source");
       const hiPc = window.getParam("hi_pc");
+      const from = window.getParam("from");
       const resultsPageBaseUrl = window.getResultsPageUrl({
         channel: channelId,
-        from: "search",
+        from,
         hi_source: hiSource,
         hi_pc: hiPc
       });
@@ -96,9 +97,9 @@ export default {
         adLoadedCallback: (loaded, e) => {
           if (e) {
             // eslint-disable-next-line no-undef
-            window._tfa = window._tfa || [];
-            window._tfa.push({ notify: "event", name: "start_checkout", id: 1891183 });
-            // window.trackEventToPixel("C_AR");
+            // window._tfa = window._tfa || [];
+            // window._tfa.push({ notify: "event", name: "start_checkout", id: 1891183 });
+            window.trackEventToPixel("C_AR");
 
             window.pushEventParamsToGtm("C_AR");
             if (window.getDetailIsClickAc()) {
