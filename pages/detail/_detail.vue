@@ -663,7 +663,7 @@ export default {
     li {
       cursor: pointer;
       line-height: 26px;
-      font-size: 20px;
+      font-size: 16px;
       width: 100%;
       @include ellipsis();
     }
@@ -782,7 +782,6 @@ export default {
     margin-bottom: vw(32);
   }
   .article-summary {
-    flex-direction: column;
     gap: 12px;
     padding: vw(24);
     margin: vw(24) 0;
@@ -814,7 +813,7 @@ export default {
       gap: vw(10);
       li {
         line-height: vw(50);
-        font-size: vw(32);
+        font-size: 16px;
       }
     }
   }
