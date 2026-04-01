@@ -34,11 +34,10 @@ export default {
 .news-style-2 {
   padding-right: 16px;
   .img {
-    width: 240px;
-    height: 160px;
+    width: 100%;
+    height: auto;
+    object-fit: cover;
     border-radius: 8px 8px 8px 8px;
-    float: left;
-    margin-right: 16px;
   }
   .category {
     display: inline-block;
@@ -53,9 +52,9 @@ export default {
     margin: 18px 0 10px;
   }
   .title {
-    font-size: 26px;
-    font-family: "rssb";
-    line-height: 36px;
+    font-size: 16px;
+    font-family: "se3";
+    line-height: 22px;
     @include ellipsis(3);
   }
   &:hover {
@@ -72,17 +71,13 @@ export default {
 }
 @media screen and (max-width: 750px) {
   .news-style-2 {
-    display: flex;
-    flex-direction: column-reverse;
     padding-right: 0;
     padding-bottom: vw(32);
     border-bottom: vw(2) solid #ececee;
     .img {
-      width: vw(658);
-      height: vw(440);
+      width: 100%;
+      height: auto;
       border-radius: vw(16);
-      float: unset;
-      margin-right: 0;
     }
     .category {
       display: none;
