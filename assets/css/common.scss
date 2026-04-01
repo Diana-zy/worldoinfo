@@ -79,12 +79,20 @@ $class-names: ("block", "flex", "grid");
   margin-bottom: 16px;
   padding-left: 64px;
   &::before {
-    content: "";
-    height: 100%;
+    content: "NEW";
+    width: 52px;
+    height: 52px;
     position: absolute;
     left: 0;
     top: 0;
-    @include icon(52px, 52px, "icon-new-tag.png");
+    background-color: $color1;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    font-family: "rssb";
+    border-radius: 4px;
   }
 }
 .title-h3 {

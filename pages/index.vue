@@ -157,16 +157,42 @@ export default {
   overflow: hidden;
   .swiper-button-prev {
     top: 209px;
-    @include icon(50px, 50px, "icon-left.png");
+    width: 50px;
+    height: 50px;
+    background-color: $color1;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     &:after {
       content: "";
+      display: block;
+      width: 12px;
+      height: 12px;
+      border-top: 2px solid #fff;
+      border-left: 2px solid #fff;
+      transform: rotate(-45deg);
+      margin-left: 4px;
     }
   }
   .swiper-button-next {
     top: 209px;
-    @include icon(50px, 50px, "icon-right.png");
+    width: 50px;
+    height: 50px;
+    background-color: $color1;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     &:after {
       content: "";
+      display: block;
+      width: 12px;
+      height: 12px;
+      border-top: 2px solid #fff;
+      border-right: 2px solid #fff;
+      transform: rotate(45deg);
+      margin-right: 4px;
     }
   }
 }
@@ -194,16 +220,42 @@ export default {
     width: 100%;
     .swiper-button-prev {
       top: vw(186);
-      @include icon(vw(64), vw(64), "icon-left.png");
+      width: vw(64);
+      height: vw(64);
+      background-color: $color1;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       &:after {
         content: "";
+        display: block;
+        width: vw(16);
+        height: vw(16);
+        border-top: 2px solid #fff;
+        border-left: 2px solid #fff;
+        transform: rotate(-45deg);
+        margin-left: vw(4);
       }
     }
     .swiper-button-next {
       top: vw(186);
-      @include icon(vw(64), vw(64), "icon-right.png");
+      width: vw(64);
+      height: vw(64);
+      background-color: $color1;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       &:after {
         content: "";
+        display: block;
+        width: vw(16);
+        height: vw(16);
+        border-top: 2px solid #fff;
+        border-right: 2px solid #fff;
+        transform: rotate(45deg);
+        margin-right: vw(4);
       }
     }
   }
