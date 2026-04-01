@@ -53,7 +53,7 @@ export default {
     color: $color1;
     background: rgba($color1, 0.2);
     border-radius: 4px 4px 4px 4px;
-    margin: 18px 0 10px;
+    margin: 10px 0 0;
   }
   .title {
     font-size: 16px;
