@@ -87,15 +87,17 @@ export default {
       border-radius: vw(16);
     }
     .title {
-      margin: vw(8) 0 vw(8);
+      margin: vw(8) 0 0;
       font-size: vw(26);
       line-height: vw(36);
+      height: vw(108);
     }
     .news-author {
       display: flex;
       gap: vw(12);
       font-size: vw(22);
       font-weight: 300;
+      margin: 6px 0 0;
       padding-bottom: vw(4);
       @include author-icon(vw(22), vw(22));
     }
