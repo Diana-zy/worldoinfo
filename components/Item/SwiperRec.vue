@@ -91,7 +91,7 @@ export default {
       align-items: center;
       .author-icon {
         margin-right: 8px;
-        @include icon(24px, 24px, "icon-logo-m.png");
+        @include icon(24px, 24px, "logo2.png");
       }
     }
     .edit-date {
@@ -136,7 +136,7 @@ export default {
         align-items: center;
         .author-icon {
           margin-right: vw(6);
-          @include icon(vw(28), vw(28), "icon-logo-m.png");
+          @include icon(vw(28), vw(28), "logo2.png");
         }
         div {
           line-height: vw(28);
