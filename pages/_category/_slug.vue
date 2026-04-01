@@ -15,11 +15,11 @@
 
             <!-- Article Summary Box -->
             <div class="article-summary" v-if="newInfo.seo_desc">
-              <div class="summary-icon">📋</div>
-              <div class="summary-content">
+              <div class="summary-header">
+                <div class="summary-icon">📋</div>
                 <h3 class="summary-title">Article Summary</h3>
-                <p class="summary-text">{{ newInfo.seo_desc }}</p>
               </div>
+              <p class="summary-text">{{ newInfo.seo_desc }}</p>
             </div>
 
             <div id="relatedsearches1"> </div>

@@ -15,11 +15,11 @@
 
             <!-- Article Summary Box -->
             <div class="article-summary" v-if="newInfo.seo_desc">
-              <div class="summary-icon">📋</div>
-              <div class="summary-content">
+              <div class="summary-header">
+                <div class="summary-icon">📋</div>
                 <h3 class="summary-title">Article Summary</h3>
-                <p class="summary-text">{{ newInfo.seo_desc }}</p>
               </div>
+              <p class="summary-text">{{ newInfo.seo_desc }}</p>
             </div>
 
             <div id="relatedsearches1"> </div>
@@ -602,8 +602,8 @@ export default {
 
 .article-summary {
   display: flex;
-  align-items: flex-start;
-  gap: 16px;
+  flex-direction: column;
+  gap: 8px;
   padding: 20px;
   margin: 24px 0;
   background: linear-gradient(135deg, #fff5f5 0%, #ffe0e0 100%);
@@ -612,14 +612,16 @@ export default {
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
 }
 
+.summary-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
 .summary-icon {
   font-size: 28px;
   flex-shrink: 0;
   line-height: 1.4;
-}
-
-.summary-content {
-  flex: 1;
 }
 
 .summary-title {
