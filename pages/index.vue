@@ -1,51 +1,45 @@
 <template>
   <div class="page home-page">
     <Header />
+    <h1 style="display: none">Worldoinfo - Global News &amp; Information</h1>
     <main class="main">
-      <section class="home-search">
-        <div class="search-group">
-          <input
-            v-model="input"
-            placeholder="Search..."
-            class="search"
-            name="search"
-            @keyup.enter="search"
-          />
-          <i v-show="input != ''" class="icon-clear" @click="clear"></i>
-          <i class="icon-search" @click="search"></i>
+      <div class="layout-left">
+        <section v-swiper:mySwiper="swiperOption" class="swiper-box">
+          <div class="swiper-wrapper">
+            <item-swiper-rec
+              v-for="(item, i) in recNews && recNews.list"
+              :key="i"
+              class="swiper-slide"
+              :item="item"
+              :index="i"
+            >
+            </item-swiper-rec>
+          </div>
+          <div class="swiper-button-prev"></div>
+          <div class="swiper-button-next"></div>
+        </section>
+
+        <h2 class="title-new-tag">Latest Articles</h2>
+        <section class="news-box-new">
+          <item-text-new v-for="(item, i) in trendingNews && trendingNews.list" :key="i" :item="item">
+          </item-text-new>
+        </section>
+
+        <div v-for="(items, index) in categoryList" class="category-box" :key="items.id">
+          <h2 class="title-h2">{{ items.seo_category && items.seo_category.name }}</h2>
+          <section>
+            <div class="news-box-2">
+              <news-item-2 v-for="(item, i) in items && items.list" :key="i" :item="item" :index="index">
+              </news-item-2>
+            </div>
+          </section>
         </div>
-        <!-- <div class="rec-keywords">
-          <p
-            v-for="(item, i) in recKeywords"
-            :key="i"
-            @click="handleSearchRecKeyword(item)"
-            class="keyword-item"
-          >
-            {{ item }}
-          </p>
-        </div> -->
-      </section>
-
-      <section v-swiper:mySwiper="swiperOption" class="swiper-box">
-        <div class="swiper-wrapper">
-          <news-item-1 v-for="(item, i) in recNews.list" :key="i" class="swiper-slide" :item="item">
-          </news-item-1>
-        </div>
-      </section>
-
-      <h2 class="title-h2">Trending</h2>
-      <section class="news-box-2">
-        <news-item-2 v-for="(item, i) in trendingNews.list" :key="i" :item="item"> </news-item-2>
-      </section>
-
-      <h2 class="title-h2">All Articles</h2>
-      <InfiniteScrollList :initial-items="allNews.list" class="news-box-2">
-        <template #default="{ items }">
-          <news-item-2 v-for="(item, i) in items" :key="i" :item="item"> </news-item-2>
-        </template>
-      </InfiniteScrollList>
+      </div>
+      <div class="layout-right">
+        <right-side-box :rec-news="trendingNews && trendingNews.list || []" :trending-news="recNews && recNews.list || []" />
+      </div>
     </main>
-    <Footer />
+    <FooterSeo />
   </div>
 </template>
 
@@ -60,53 +54,77 @@ export default {
   },
   async asyncData({ $axios, env }) {
     try {
-      // 并行处理多个异步请求
-      const [recNewsResponse, trendingNewsResponse, allNewsResponse] = await Promise.all([
-        $axios.$get("/api/article/menu", {
-          params: {
-            site_id: env.SITE_ID,
-            mod_id: "rec"
-          }
-        }),
-        $axios.$get("/api/article/menu", {
-          params: {
-            site_id: env.SITE_ID,
-            mod_id: "trending",
-            size: 10
-          }
-        }),
-        $axios.$get("/api/article/menu", {
-          params: {
-            site_id: env.SITE_ID,
-            mod_id: "all",
-            size: 10
-          }
-        })
-      ]);
-
-      // 返回多个接口的数据
+      const [recNewsResponse, trendingNewsResponse, allNewsResponse, categoryResponse] =
+        await Promise.all([
+          $axios.$get("/api/article/menu", {
+            params: {
+              site_id: env.SITE_ID,
+              mod_id: "rec"
+            }
+          }),
+          $axios.$get("/api/article/get_all_articles", {
+            params: {
+              site_id: env.SITE_ID,
+              size: 4,
+              page: 1
+            }
+          }),
+          $axios.$get("/api/article/menu", {
+            params: {
+              site_id: env.SITE_ID,
+              mod_id: "all",
+              page: 1,
+              size: 4
+            }
+          }),
+          $axios.$get("/api/article/get_all_seo_category", {
+            params: {
+              site_id: env.SITE_ID
+            }
+          })
+        ]);
+      let category = [];
+      await categoryResponse.list.map(async (item) => {
+        category.push(
+          $axios.$get("/api/article/get_seo_category_page", {
+            params: {
+              site_id: env.SITE_ID,
+              seo_category_id: item.id,
+              size: 4,
+              page: 1
+            }
+          })
+        );
+      });
+      let list = await Promise.all(category);
       return {
         recNews: recNewsResponse,
         trendingNews: trendingNewsResponse,
-        allNews: allNewsResponse
+        allNews: allNewsResponse,
+        categoryList: list && list.filter((item) => item != null)
       };
     } catch (error) {
       console.error("Error fetching data:", error);
+      return {
+        recNews: null,
+        trendingNews: null,
+        allNews: null,
+        categoryList: []
+      };
     }
   },
   data() {
     return {
       swiperOption: {
         slidesPerView: "auto",
-        autoplay: {
-          delay: 3000
+        navigation: {
+          nextEl: ".swiper-button-next",
+          prevEl: ".swiper-button-prev"
         }
       },
-      input: "",
-      recKeywords: this.$recKeywords // 站点推荐关键字
+      input: ""
     };
   },
-
   methods: {
     search() {
       if (this.input.length < 1) {
@@ -116,21 +134,11 @@ export default {
         });
         return;
       }
-      // try {
-      //   bge("event", "ec_register", { configId: "904803718856417024" });
-      // } catch (error) {
-      //   console.error("Error tracking search event:", error);
-      // }
-
       simulateAFSSearch(this.input);
     },
     clear() {
       this.input = "";
     }
-    // handleSearchRecKeyword(keyword) {
-    //   this.input = keyword;
-    //   simulateAFSSearch(keyword);
-    // }
   }
 };
 </script>
@@ -139,165 +147,76 @@ export default {
   padding-bottom: 32px;
   border-bottom: 1px solid #ececee;
 }
-.home-search {
-  width: 100%;
-  height: 315px;
-  background-image: url("~/assets/images/bg-pc.webp");
-  background-size: cover;
-  margin-bottom: 32px;
-  background-position: center;
+.category-box {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  .search-group {
-    position: relative;
-    margin: 119px 0 16px;
-  }
-  .search {
-    width: 560px;
-    height: 48px;
-    background: rgba(#ffffff, 0.9);
-    box-shadow: 0px 0px 8px 0px rgba(0, 0, 0, 0);
-    border-radius: 48px 48px 48px 48px;
-    padding-left: 16px;
-    padding-right: 80px;
-    font-size: 14px;
-    &::placeholder {
-      color: rgba($font1, 0.4);
-    }
-  }
-  .icon-search {
-    display: block;
-    position: absolute;
-    right: -1px;
-    top: 0;
-    cursor: pointer;
-    border-radius: 0 48px 48px 0;
-    @include btn-img(56px, 48px, "icon-search.png");
-    background-size: 24px 24px;
-    &::before {
-      content: "";
-      display: inline-block;
-      width: 1px;
-      height: 16px;
-      background: rgba(#000, 0.1);
-      position: absolute;
-      left: 0;
-      top: 50%;
-      transform: translateY(-50%);
-    }
-  }
-  .icon-clear {
-    position: absolute;
-    right: 66px;
-    top: 50%;
-    transform: translateY(-50%);
-    cursor: pointer;
-    background-image: url("~/assets/images/icon-clear.png");
-    width: 16px;
-    height: 16px;
-    background-size: cover;
-  }
-  .rec-keywords {
-    width: 560px;
-    display: flex;
-    align-items: center;
-    flex-wrap: nowrap;
-    @include scroll;
-  }
-  .keyword-item {
-    white-space: nowrap;
-    margin-right: 16px;
-    font-size: 12px;
-    line-height: 16px;
-    color: $font2;
-    cursor: pointer;
-    &:before {
-      content: ">";
-      color: rgba($font2, 0.5);
-    }
-  }
+  gap: 0px;
 }
-.swiper-slide {
-  width: 282px;
-  border-radius: 16px;
-  border: 1px solid #ececee;
-  margin-right: 24px;
+.swiper-box {
+  position: relative;
   overflow: hidden;
+  .swiper-button-prev {
+    top: 209px;
+    @include icon(50px, 50px, "icon-left.png");
+    &:after {
+      content: "";
+    }
+  }
+  .swiper-button-next {
+    top: 209px;
+    @include icon(50px, 50px, "icon-right.png");
+    &:after {
+      content: "";
+    }
+  }
 }
 .news-box-2 {
+  width: 100%;
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 24px;
 }
-@media screen and (max-width: 1100px) {
-  .news-box-2 {
-    display: flex;
-    flex-wrap: wrap;
-  }
+.swiper-slide {
+  overflow: hidden;
+}
+.news-box-new {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 24px;
 }
 @media screen and (max-width: 750px) {
   .main {
     padding-bottom: vw(32);
     border-bottom: none;
   }
-
-  .home-search {
-    width: 100vw;
-    height: vw(400);
-    background-image: url("~/assets/images/bg-m.webp");
-    margin-bottom: vw(48);
-    margin-left: vw(-46);
-    margin-top: vw(-1);
-    .search-group {
-      margin: vw(132) 0 vw(24);
-    }
-    .search {
-      width: vw(658);
-      height: vw(80);
-      box-shadow: 0 0 vw(16) 0 rgba(0, 0, 0, 0);
-      border-radius: vw(96);
-      padding-left: vw(34);
-      padding-right: vw(160);
-      font-size: vw(28);
-    }
-    .icon-search {
-      width: vw(112);
-      height: vw(80);
-      border-radius: 0 vw(96) vw(96) 0;
-      background-size: vw(48);
-      &::before {
-        height: vw(32);
+  .swiper-box {
+    margin-top: vw(32);
+    width: 100%;
+    .swiper-button-prev {
+      top: vw(186);
+      @include icon(vw(64), vw(64), "icon-left.png");
+      &:after {
+        content: "";
       }
     }
-    .icon-clear {
-      right: vw(132);
-      width: vw(32);
-      height: vw(32);
+    .swiper-button-next {
+      top: vw(186);
+      @include icon(vw(64), vw(64), "icon-right.png");
+      &:after {
+        content: "";
+      }
     }
-    .rec-keywords {
-      width: 100vw;
-      padding-left: vw(46);
-    }
-    .keyword-item {
-      margin-right: vw(32);
-      font-size: vw(24);
-      line-height: vw(28);
-    }
-  }
-  .swiper-box {
-    width: 100vw;
-    margin-left: vw(-46);
-    padding-left: vw(23);
   }
   .swiper-slide {
-    width: vw(480);
-    border-radius: vw(32);
-    border: vw(2) solid #ececee;
-    margin-right: vw(32);
+    width: 100%;
+    height: vw(764);
   }
   .news-box-2 {
-    gap: vw(32);
+    gap: vw(28) vw(14);
+  }
+  .news-box-new {
+    grid-template-columns: repeat(1, 1fr);
+    gap: vw(20);
   }
 }
 </style>
