@@ -12,6 +12,10 @@
     />
     <p class="category">{{ capitalizeFirstLetter(item.seo_category_name || item.category_locale_name) }}</p>
     <p class="title">{{ item.name }}</p>
+    <div class="news-author">
+      <div>{{ item.author.name }}</div>
+      <div>{{ item.updated_at }}</div>
+    </div>
   </CustomLink>
 </template>
 
@@ -57,6 +61,9 @@ export default {
     line-height: 22px;
     @include ellipsis(3);
   }
+  .news-author {
+    display: none;
+  }
   &:hover {
     .title {
       // color: $color1;
@@ -79,13 +86,18 @@ export default {
       height: auto;
       border-radius: vw(16);
     }
-    .category {
-      display: none;
-    }
     .title {
-      margin: 0 0 vw(16);
-      font-size: vw(52);
-      line-height: vw(72);
+      margin: vw(8) 0 vw(8);
+      font-size: vw(26);
+      line-height: vw(36);
+    }
+    .news-author {
+      display: flex;
+      gap: vw(12);
+      font-size: vw(22);
+      font-weight: 300;
+      padding-bottom: vw(4);
+      @include author-icon(vw(22), vw(22));
     }
   }
 }
