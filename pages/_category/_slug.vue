@@ -319,8 +319,8 @@ export default {
       });
       const adSenseConfig = {
         channel: this.channelId,
-        pubId: "partner-pub-6612490456597819",
-        styleId: "6462282781",
+        pubId: "partner-pub-1853000876464912",
+        styleId: "3911226554",
         adsafe: "low",
         ignoredPageParams,
         relatedSearchTargeting: "content",
