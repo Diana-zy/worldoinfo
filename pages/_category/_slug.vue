@@ -22,7 +22,6 @@
               <p class="summary-text">{{ newInfo.seo_desc }}</p>
             </div>
 
-            <div id="relatedsearches1"> </div>
             <aside class="toc-container" v-if="toc.length">
               <h3 class="toc-title">Table of Contents</h3>
               <nav class="toc-nav">
@@ -38,6 +37,7 @@
                 </ul>
               </nav>
             </aside>
+            <div id="relatedsearches1"> </div>
             <NuxtImg
               format="auto"
               fit="cover"
@@ -270,12 +270,103 @@ export default {
       ]
     };
   },
+  mounted() {
+    const searchParams = new URLSearchParams(window.location.search);
+    if (searchParams.has("channel")) {
+      this.channelId = searchParams.get("channel");
+    } else {
+      this.channelId = (this.newInfo && this.newInfo.channel) || "";
+      if (this.channelId !== "") {
+        searchParams.set("channel", this.channelId);
+        const newUrl = `${window.location.origin}${window.location.pathname}?${searchParams.toString()}`;
+        window.history.replaceState({}, "", newUrl);
+      }
+    }
+    setTimeout(() => {
+      this.newInfo && this.newInfo.no_entry !== 1 && this.addAdSenseScript();
+    }, 0);
+  },
   methods: {
     scrollToAnchor(id) {
       const element = document.getElementById(id);
       if (element) {
         element.scrollIntoView({ behavior: "smooth", block: "start" });
       }
+    },
+    addAdSenseScript() {
+      const searchParams = new URLSearchParams(window.location.search);
+      let terms = searchParams.has("terms") ? searchParams.get("terms") : "";
+      terms = terms.replace(/[，]/g, ",");
+      let headline = searchParams.has("headline") ? searchParams.get("headline") : "";
+      if (headline === "{title}" || headline === "{{ad_title}}") {
+        headline = "";
+      }
+
+      const paramKeys = [];
+      for (const param of searchParams) {
+        paramKeys.push(param[0]);
+      }
+      const ignoredPageParams = paramKeys.join(",");
+
+      const channelId = window.getParam && window.getParam("channel");
+      const hiSource = window.getParam && window.getParam("hi_source");
+      const hiPc = window.getParam && window.getParam("hi_pc");
+      const resultsPageBaseUrl = window.getResultsPageUrl && window.getResultsPageUrl({
+        channel: channelId,
+        from: "detail",
+        hi_source: hiSource,
+        hi_pc: hiPc
+      });
+      const adSenseConfig = {
+        channel: this.channelId,
+        pubId: "partner-pub-6612490456597819",
+        styleId: "6462282781",
+        adsafe: "low",
+        ignoredPageParams,
+        relatedSearchTargeting: "content",
+        resultsPageBaseUrl,
+        resultsPageQueryParam: "query",
+        terms: terms || (this.newInfo && this.newInfo.terms),
+        referrerAdCreative: headline || terms || (this.newInfo && this.newInfo.referrer_ad_creative),
+        ivt: false
+      };
+      // eslint-disable-next-line no-undef
+      _googCsa("relatedsearch", adSenseConfig, {
+        container: "relatedsearches1",
+        relatedSearches: 10,
+        adLoadedCallback: function (loaded, response, isExperimentVariant, callbackOptions) {
+          if (response) {
+            if (window.trackEventToPixel) window.trackEventToPixel("D_C_AC");
+            if (window.pushEventParamsToGtm) window.pushEventParamsToGtm("C_AC");
+            const hi_user_source = window.getValueByURLOrCookie && window.getValueByURLOrCookie("hi_source");
+            if (hi_user_source === "unknown") {
+              window.dataLayer && window.dataLayer.push({ event: "Detail_D_C_AC_SEO" });
+            }
+            try {
+              let numberOfKeys = 0;
+              let concatenatedKeys = "miss";
+              if (callbackOptions.termPositions) {
+                const keys = Object.keys(callbackOptions.termPositions);
+                numberOfKeys = keys.length;
+                concatenatedKeys = keys.join(",");
+              }
+              const element = document.getElementById("master-1");
+              const height = parseFloat(element.style.height);
+              const result = Math.round(height / 105);
+              // eslint-disable-next-line no-undef
+              dataLayer.push({
+                event: "C_AC_IN",
+                queryNum: 10,
+                num: result,
+                key1: numberOfKeys,
+                key2: concatenatedKeys
+              });
+            } catch (e) {
+              console.log(e);
+            }
+          }
+        }
+      });
     }
   }
 };
