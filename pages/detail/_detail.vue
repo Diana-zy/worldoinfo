@@ -439,8 +439,8 @@ export default {
       });
       const adSenseConfig = {
         channel: this.channelId,
-        pubId: "partner-pub-6612490456597819",
-        styleId: "6462282781",
+        pubId: "partner-pub-1853000876464912",
+        styleId: "3911226554",
         adsafe: "low",
         ignoredPageParams,
         relatedSearchTargeting: "content",
@@ -599,7 +599,6 @@ export default {
   font-size: 14px;
   margin-bottom: 28px;
 }
-
 .article-summary {
   display: flex;
   flex-direction: column;
@@ -611,19 +610,16 @@ export default {
   border-radius: 8px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
 }
-
 .summary-header {
   display: flex;
   align-items: center;
   gap: 16px;
 }
-
 .summary-icon {
   font-size: 28px;
   flex-shrink: 0;
   line-height: 1.4;
 }
-
 .summary-title {
   font-size: 16px;
   font-weight: bold;
@@ -631,7 +627,6 @@ export default {
   margin: 0;
   line-height: 1.4;
 }
-
 .summary-text {
   font-size: 14px;
   color: #5a5a5a;
@@ -643,7 +638,6 @@ export default {
   grid-template-columns: repeat(2, 1fr);
   gap: 24px;
 }
-
 .toc-container {
   margin: 0px 0 20px;
   padding: 12px 0;
@@ -671,13 +665,11 @@ export default {
     }
   }
 }
-
 .related-articles {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 20px;
 }
-
 .right-sider {
   .right-title {
     background: $color1;
@@ -715,14 +707,12 @@ export default {
     }
   }
 }
-
 @media screen and (max-width: 1100px) {
   .news-box-2 {
     display: flex;
     flex-wrap: wrap;
   }
 }
-
 @media screen and (max-width: 750px) {
   ::v-deep .table-container {
     margin: vw(30) 0;
