@@ -394,9 +394,9 @@ export default {
         window.history.replaceState({}, "", newUrl);
       }
     }
-    setTimeout(() => {
+    this.$nextTick(() => {
       this.handleAdsScript();
-    }, 0);
+    });
   },
   methods: {
     capitalizeFirstLetter,
@@ -428,11 +428,10 @@ export default {
       }
       const ignoredPageParams = paramKeys.join(",");
 
-      const channelId = window.getParam && window.getParam("channel");
-      const hiSource = window.getParam && window.getParam("hi_source");
-      const hiPc = window.getParam && window.getParam("hi_pc");
-      const resultsPageBaseUrl = window.getResultsPageUrl && window.getResultsPageUrl({
-        channel: channelId,
+      const hiSource = window.getParam("hi_source");
+      const hiPc = window.getParam("hi_pc");
+      const resultsPageBaseUrl = window.getResultsPageUrl({
+        channel: this.channelId,
         from: "detail",
         hi_source: hiSource,
         hi_pc: hiPc
