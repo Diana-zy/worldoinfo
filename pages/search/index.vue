@@ -6,11 +6,13 @@
         <common-page-label :title="`Search Results for &quot;${input}&quot;`" />
         <div id="afscontainer1"> </div>
         <div id="relatedsearches1"> </div>
+        <!-- search results hidden until seo_category_path link fix is applied
         <h3 class="title-h3">{{ searchTitle }}</h3>
         <section>
           <item-search-result v-for="(item, i) in searchResultNews" :key="i" :item="item">
           </item-search-result>
         </section>
+        -->
       </div>
       <div class="layout-right">
         <right-side-box :rec-news="trendingNews && trendingNews.list || []" :trending-news="recNews && recNews.list || []" />
@@ -73,7 +75,6 @@ export default {
 
     this.input = this.$route.query.query || "";
     this.input && this.addAdSense();
-    this.input && this.searchNews();
   },
   methods: {
     addAdSense() {
@@ -82,20 +83,6 @@ export default {
         if (window.trackEventToPixel) window.trackEventToPixel("Q_AR");
         this.addAdSenseScript();
       }, 0);
-    },
-    async searchNews() {
-      try {
-        const response = await this.$axios.$post("/api/article/search", {
-          site_id: process.env.SITE_ID,
-          key: this.input
-        });
-
-        this.searchResultNews = response.list;
-        this.isShowResults = true;
-      } catch (error) {
-        this.isShowResults = true;
-        console.error("Error fetching data:", error);
-      }
     },
     addAdSenseScript() {
       const queryString = this.input;
