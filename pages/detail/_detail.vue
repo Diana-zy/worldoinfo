@@ -13,7 +13,6 @@
             </div>
             <div class="news-detail first_paragraph">{{ newInfo.first_paragraph }}</div>
 
-            <!-- Article Summary Box -->
             <div class="article-summary" v-if="newInfo.seo_desc">
               <div class="summary-header">
                 <div class="summary-icon">📋</div>
@@ -51,7 +50,6 @@
             <div class="news-detail" v-html="htmlWithAnchor"></div>
             <!--eslint-enable-->
 
-            <!-- FAQ Section -->
             <section class="faq-section" v-if="articleFaqs && articleFaqs.length">
               <h2 class="faq-title">Related Questions</h2>
               <div class="faq-list">
@@ -188,13 +186,28 @@ export default {
         return [];
       };
 
-      data.content = data.content.replace(/font-family:\s*['"]? 宋体 ['"]?;/g, "");
+      data.content = data.content.replace(/font-family:\s*['"]?\s*宋体\s*['"]?;/g, "");
       data.content = data.content.replace(/<\/h4><p><br><br>|<br><br><\/p><h4>/g, (match) => {
         return match.includes("</h4><p>") ? "</h4><p>" : "</p><h4>";
       });
 
-      const { toc: flatToc, htmlWithAnchor } = processHtmlWithToc(data.content, [2]);
+      const { toc: flatToc, htmlWithAnchor: rawHtml } = processHtmlWithToc(data.content, [2]);
       const toc = generateNestedToc(flatToc);
+
+      let htmlWithAnchor = rawHtml
+        .replace(/(<table)/g, '<div class="table-scroll-wrapper">$1')
+        .replace(/<\/table>/g, "</table></div>");
+
+      const pEnds = [];
+      const pRegex = /<\/p>/gi;
+      let pMatch;
+      while ((pMatch = pRegex.exec(rawHtml)) !== null) {
+        pEnds.push(pMatch.index + pMatch[0].length);
+      }
+      if (pEnds.length > 0) {
+        const midPos = pEnds[Math.floor(pEnds.length / 2)];
+        htmlWithAnchor = rawHtml.slice(0, midPos) + '<div id="relatedsearches2"></div>' + rawHtml.slice(midPos);
+      }
 
       const articleFaqs = data.faqs || [
         {
@@ -240,23 +253,25 @@ export default {
     };
   },
   head() {
+    const seoTitle = this.newInfo && this.newInfo.seo_title || this.newInfo && this.newInfo.name;
+    const seoDesc = this.newInfo && this.newInfo.seo_desc;
     return {
-      title: this.newInfo && this.newInfo.name ? this.newInfo.name + " - Worldoinfo" : "Worldoinfo",
+      title: seoTitle ? `${seoTitle} - Worldoinfo` : "Worldoinfo",
       meta: [
         {
           hid: "description",
           name: "description",
-          content: this.newInfo && this.newInfo.seo_desc
+          content: seoDesc
         },
         {
           hid: "og:title",
           property: "og:title",
-          content: this.newInfo && this.newInfo.seo_title
+          content: seoTitle
         },
         {
           hid: "og:description",
           property: "og:description",
-          content: this.newInfo && this.newInfo.seo_desc
+          content: seoDesc
         },
         {
           hid: "og:url",
@@ -286,12 +301,12 @@ export default {
         {
           hid: "twitter:title",
           property: "twitter:title",
-          content: this.newInfo && this.newInfo.seo_title
+          content: seoTitle
         },
         {
           hid: "twitter:description",
           property: "twitter:description",
-          content: this.newInfo && this.newInfo.seo_desc
+          content: seoDesc
         }
       ],
       script: [
@@ -316,8 +331,11 @@ export default {
             "@context": "https://schema.org",
             "@type": "NewsArticle",
             articleBody: this.newInfo && this.newInfo.content_text || "",
-            headline: this.newInfo && this.newInfo.seo_title || "",
-            description: this.newInfo && this.newInfo.seo_desc || "",
+            articleSection: `Home, ${
+              this.newInfo && this.newInfo.seo_category_name || this.newInfo && this.newInfo.category_locale_name || ""
+            }, ${this.newInfo && this.newInfo.name || ""}`,
+            headline: this.newInfo && this.newInfo.seo_title || this.newInfo && this.newInfo.name || "",
+            description: seoDesc || "",
             datePublished: this.newInfo && this.newInfo.updated_at || "",
             dateModified: this.newInfo && this.newInfo.updated_at || "",
             author: [
@@ -441,6 +459,7 @@ export default {
         pubId: "partner-pub-1853000876464912",
         styleId: "3911226554",
         adsafe: "low",
+        adtest: "off",
         ignoredPageParams,
         relatedSearchTargeting: "content",
         resultsPageBaseUrl,
@@ -449,63 +468,75 @@ export default {
         referrerAdCreative: headline || terms || (this.newInfo && this.newInfo.referrer_ad_creative),
         ivt: false
       };
-
       // eslint-disable-next-line no-undef
-      _googCsa("relatedsearch", adSenseConfig, {
-        container: "relatedsearches1",
-        relatedSearches: 10,
-        adLoadedCallback: function (loaded, response, isExperimentVariant, callbackOptions) {
-          if (response) {
-            if (window.trackEventToPixel) window.trackEventToPixel("D_C_AC");
-            if (window.pushEventParamsToGtm) window.pushEventParamsToGtm("C_AC");
-            const hi_user_source = window.getValueByURLOrCookie && window.getValueByURLOrCookie("hi_source");
-            if (hi_user_source === "unknown") {
-              window.dataLayer && window.dataLayer.push({ event: "Detail_D_C_AC_SEO" });
-            }
-            try {
-              let numberOfKeys = 0;
-              let concatenatedKeys = "miss";
-              if (callbackOptions.termPositions) {
-                const keys = Object.keys(callbackOptions.termPositions);
-                numberOfKeys = keys.length;
-                concatenatedKeys = keys.join(",");
+      _googCsa(
+        "relatedsearch",
+        adSenseConfig,
+        {
+          container: "relatedsearches1",
+          relatedSearches: 5,
+          adLoadedCallback: function (loaded, response, isExperimentVariant, callbackOptions) {
+            if (response) {
+              if (window.trackEventToPixel) window.trackEventToPixel("D_C_AC");
+              if (window.pushEventParamsToGtm) window.pushEventParamsToGtm("C_AC");
+              const hi_user_source = window.getValueByURLOrCookie && window.getValueByURLOrCookie("hi_source");
+              if (hi_user_source === "unknown") {
+                window.dataLayer && window.dataLayer.push({ event: "Detail_D_C_AC_SEO" });
               }
-              const element = document.getElementById("master-1");
-              const height = parseFloat(element.style.height);
-              const result = Math.round(height / 105);
-              // eslint-disable-next-line no-undef
-              dataLayer.push({
-                event: "C_AC_IN",
-                queryNum: 10,
-                num: result,
-                key1: numberOfKeys,
-                key2: concatenatedKeys
-              });
-            } catch (e) {
-              console.log(e);
+              try {
+                let numberOfKeys = 0;
+                let concatenatedKeys = "miss";
+                if (callbackOptions.termPositions) {
+                  const keys = Object.keys(callbackOptions.termPositions);
+                  numberOfKeys = keys.length;
+                  concatenatedKeys = keys.join(",");
+                }
+                const element = document.getElementById("master-1");
+                const height = parseFloat(element.style.height);
+                const result = Math.round(height / 105);
+                // eslint-disable-next-line no-undef
+                dataLayer.push({
+                  event: "C_AC_IN",
+                  queryNum: 10,
+                  num: result,
+                  key1: numberOfKeys,
+                  key2: concatenatedKeys
+                });
+              } catch (e) {
+                console.log(e);
+              }
             }
           }
+        },
+        {
+          container: "relatedsearches2",
+          relatedSearches: 5
         }
-      });
+      );
     },
     handleCreateTableParentDom() {
-      let dom = document.getElementsByClassName("table-container")?.[0];
-      if (dom) {
-        let newParent = document.createElement("div");
-        newParent.setAttribute("class", "table-container-parent");
-        let parent = dom.parentNode;
-        parent.insertBefore(newParent, dom);
-        newParent.appendChild(dom);
-      }
+      const doms = Array.from(document.querySelectorAll(".news-detail table"));
+      doms.forEach(dom => {
+        dom.classList.add("table-container");
+        if (!dom.parentNode.classList.contains("table-container-parent")) {
+          const newParent = document.createElement("div");
+          newParent.setAttribute("class", "table-container-parent");
+          const parent = dom.parentNode;
+          parent.insertBefore(newParent, dom);
+          newParent.appendChild(dom);
+        }
+      });
     }
   }
 };
 </script>
 
 <style lang="scss">
+::v-deep .table-scroll-wrapper,
 ::v-deep .table-container-parent {
   width: 100%;
   overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
 }
 .news-author {
   display: flex;
@@ -517,7 +548,8 @@ export default {
 }
 ::v-deep .table-container {
   position: relative;
-  width: 100%;
+  width: max-content;
+  min-width: 100%;
   margin: 24px 0;
   border-top: 3px solid rgba($font3, 0.65);
   border-collapse: collapse;
@@ -526,6 +558,7 @@ export default {
     padding: 10px;
     height: 61px;
     td {
+      min-width: 120px;
       background: rgba($color1, 0.1);
       border: 2px solid #fff;
       font-size: 14px;
@@ -538,6 +571,7 @@ export default {
   }
   tr:first-child {
     th, td {
+      min-width: 120px;
       color: $font5;
       font-size: 16px;
       border-bottom: 3px solid rgba($font3, 0.35);
