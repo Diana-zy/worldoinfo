@@ -24,7 +24,7 @@
           <div>{{ item.updated_at }}</div>
         </div>
       </div>
-      <div class="m-news-right"> 見る </div>
+      <div class="m-news-right"> View </div>
     </div>
   </CustomLink>
 </template>
