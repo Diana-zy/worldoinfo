@@ -8,7 +8,12 @@
           <article class="article" v-if="newInfo">
             <h1 class="article-title">{{ newInfo.name }}</h1>
             <div class="news-author">
-              <div>{{ newInfo.author && newInfo.author.name }}</div>
+              <nuxt-link
+                v-if="newInfo.author && newInfo.author.id"
+                :to="`/author/${toAuthorSlug(newInfo.author.name, newInfo.author.id)}/`"
+                class="author-link"
+              >{{ newInfo.author.name }}</nuxt-link>
+              <span v-else>{{ newInfo.author && newInfo.author.name }}</span>
               <div>{{ newInfo.updated_at }}</div>
             </div>
             <div class="news-detail first_paragraph">{{ newInfo.first_paragraph }}</div>
@@ -103,7 +108,7 @@
 </template>
 
 <script>
-import { shuffleArray, capitalizeFirstLetter } from "../../utils/utils";
+import { shuffleArray, capitalizeFirstLetter, toAuthorSlug } from "../../utils/utils";
 import Breadcrumb from "../../components/Breadcrumb";
 import CustomLink from "../../components/CustomLink";
 import ItemModeNew from "../../components/Item/ModeNew";
@@ -343,7 +348,10 @@ export default {
                 "@type": "Person",
                 name: this.newInfo && this.newInfo.author && this.newInfo.author.name || "",
                 description: this.newInfo && this.newInfo.author && this.newInfo.author.intro || "",
-                image: `https://bunchthings.com/${this.newInfo && this.newInfo.author && this.newInfo.author.avatar || ""}`
+                image: `https://bunchthings.com/${this.newInfo && this.newInfo.author && this.newInfo.author.avatar || ""}`,
+                url: this.newInfo && this.newInfo.author && this.newInfo.author.id
+                  ? `https://worldoinfo.com/author/${toAuthorSlug(this.newInfo.author.name, this.newInfo.author.id)}/`
+                  : undefined
               }
             ],
             mainEntityOfPage: {
@@ -417,6 +425,7 @@ export default {
     });
   },
   methods: {
+    toAuthorSlug,
     capitalizeFirstLetter,
     scrollToAnchor(anchorId) {
       const target = document.getElementById(anchorId);
@@ -545,6 +554,14 @@ export default {
   font-size: 14px;
   padding-bottom: 16px;
   @include author-icon(25px, 25px);
+
+  .author-link {
+    color: inherit;
+    text-decoration: none;
+    &:hover {
+      color: $color1;
+    }
+  }
 }
 ::v-deep .table-container {
   position: relative;
