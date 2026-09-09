@@ -108,16 +108,51 @@ export default {
   buildModules: ["@nuxt/image", "@nuxtjs/pwa"],
   css: ["@/assets/css/fonts.css", "@/assets/css/reset.css", "@/assets/css/common.scss"],
   modules: ["@nuxtjs/axios"],
+  // SEO_FLAGS_FILE：详情页构建期(asyncData，process.server && process.static)
+  // 顺手记录每个路径的is_seo，供下面sitemap生成时过滤用。这个文件名两处都
+  // 引用到（这里 + pages/detail/_detail.vue），改动时要同步改
   hooks: {
+    // 每次构建开始时先清空/重建，不能只依赖generate:done跑完后删除——
+    // 用的是长期复用的自托管runner，上次构建如果中途崩溃(比如某个detail页
+    // asyncData()抛异常)，删除那一步会跑不到，残留的旧数据可能被这一次
+    // 构建误读，把已经不存在或is_seo已变化的路径混进新sitemap
+    'generate:before'() {
+      const nodePath = require('path')
+      const fs = require('fs')
+      const seoFlagsFile = nodePath.join(__dirname, '.seo-flags.jsonl')
+      try {
+        fs.writeFileSync(seoFlagsFile, '')
+      } catch (e) {}
+    },
     'generate:done'(generator) {
       const nodePath = require('path')
       const fs = require('fs')
       const hostname = 'https://worldoinfo.com'
       const today = new Date().toISOString().split('T')[0]
+      const seoFlagsFile = nodePath.join(__dirname, '.seo-flags.jsonl')
 
-      const routes = [...generator.generatedRoutes].filter(
-        (r) => r && typeof r === 'string' && !r.includes(':')
-      )
+      // 投放专用落地页文章(is_seo=false/0)不应该出现在sitemap里——读detail页
+      // 构建期记录下来的is_seo，只有明确读到false/0才排除；没记录到的路径
+      // (分类页本来就不走这套逻辑、或者某个detail页asyncData失败没记录到)
+      // 默认放行，不能因为缺记录就误伤
+      const seoFlags = new Map()
+      try {
+        const raw = fs.readFileSync(seoFlagsFile, 'utf8')
+        raw.split('\n').filter(Boolean).forEach((line) => {
+          try {
+            const { path: p, is_seo } = JSON.parse(line)
+            seoFlags.set(p, is_seo)
+          } catch (e) {}
+        })
+      } catch (e) {}
+
+      const routes = [...generator.generatedRoutes]
+        .filter((r) => r && typeof r === 'string' && !r.includes(':'))
+        .filter((r) => {
+          if (!seoFlags.has(r)) return true
+          const v = seoFlags.get(r)
+          return !(v === false || v === 0)
+        })
 
       const urlEntries = routes
         .map(
@@ -134,6 +169,10 @@ export default {
 
       const outputPath = nodePath.join(generator.options.generate.dir, 'sitemap.xml')
       fs.writeFileSync(outputPath, xml, 'utf8')
+
+      try {
+        fs.unlinkSync(seoFlagsFile)
+      } catch (e) {}
     }
   },
   pwa: {

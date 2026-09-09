@@ -90,3 +90,8 @@ sw.*
 *.swp
 .vscode
 dist.zip
+
+# 构建期临时文件：详情页asyncData()记录is_seo，供sitemap生成时排除投放
+# 落地页用。正常情况下generate:before/generate:done会自动清理，这里
+# 兜底防止意外提交到仓库
+.seo-flags.jsonl
