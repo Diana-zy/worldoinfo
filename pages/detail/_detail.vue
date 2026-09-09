@@ -414,12 +414,16 @@ export default {
       this.channelId = searchParams.get("channel");
     } else {
       this.channelId = (this.newInfo && this.newInfo.channel) || "";
+      // URL本身没带channel、从文章配置兜底取到的情况下，不改当前URL（避免
+      // 碰到SEO文章的地址栏），改成写一个当次访问的短期cookie，供
+      // handleRequestAdByChannel()在URL读不到channel时兜底读取——保证
+      // 详情页和后续结果页对同一次访问判断出一致的channel，不然详情页记录
+      // 的漏斗状态和结果页读到的channel对不上号，广告请求会被误挡
       if (this.channelId !== "") {
-        searchParams.set("channel", this.channelId);
-        const newUrl = `${window.location.origin}${window.location.pathname}?${searchParams.toString()}`;
-        window.history.replaceState({}, "", newUrl);
+        window.setCookie("hi_channel_fallback", this.channelId, 1);
       }
     }
+    window.handleRequestAdByChannel("mounted", 1);
     this.$nextTick(() => {
       this.handleAdsScript();
     });
@@ -488,6 +492,7 @@ export default {
             if (response) {
               if (window.trackEventToPixel) window.trackEventToPixel("D_C_AC");
               if (window.pushEventParamsToGtm) window.pushEventParamsToGtm("C_AC");
+              window.handleRequestAdByChannel("query_ad", 1);
               const hi_user_source = window.getValueByURLOrCookie && window.getValueByURLOrCookie("hi_source");
               if (hi_user_source === "unknown") {
                 window.dataLayer && window.dataLayer.push({ event: "Detail_D_C_AC_SEO" });
