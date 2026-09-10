@@ -25,12 +25,23 @@ export default {
         .filter((item) => item && String(item).trim())
         .map((item) => {
           const s = String(item).trim();
-          // SEO文章的item本身就是"分类/urlslug"这种带斜杠的组合，走两段式
+          // 2026-09-10实测get_all_path_v2真实返回确认的规律：
+          // SEO文章是"分类/urlslug-id"，不带前导斜杠，走两段式
           // /:category/:detail路由（router.extendRoutes里注册的那条）；
-          // 非SEO文章(投放落地页)没有分类，item不带斜杠，得走
-          // pages/detail/_detail.vue默认文件路由/detail/:detail，这也正好
-          // 是ad_delivery投放链接实际在用的URL格式(/detail/{id}/?channel=...)
-          return s.includes("/") ? `/${s}/` : `/detail/${s}/`;
+          // 非SEO文章(投放落地页)没有分类，是"/urlslug-id"这种带前导斜杠、
+          // 分类段为空字符串的格式(比如"/-8907"这种连slug都是空的)。
+          // 投放链接用的是纯数字id(/detail/{id}/，参考
+          // ad_delivery/delivery_link.py)，不是带slug的完整路径，要从
+          // slug里按最后一个"-"切出id，构建成/detail/{id}/，走
+          // pages/detail/_detail.vue默认文件路由/detail/:detail，
+          // 跟_detail.vue的asyncData()解析id用的是同一套规则
+          if (s.startsWith("/")) {
+            const slug = s.slice(1);
+            const lastDashIndex = slug.lastIndexOf("-");
+            const id = lastDashIndex >= 0 ? slug.substring(lastDashIndex + 1) : slug;
+            return `/detail/${id}/`;
+          }
+          return `/${s}/`;
         });
       const urls = [...categoryPaths, ...detailPaths];
       return urls;

@@ -231,12 +231,23 @@ export default {
       // 不影响dev模式/客户端导航。用process.cwd()而不是__dirname——.vue文件
       // 的<script>会经过webpack打包，__dirname在打包产物里不保证还是源码
       // 目录的真实路径。文件名要跟nuxt.config.js里的保持一致
+      //
+      // 记录的path必须跟routes()里实际生成出来的路径完全一致，sitemap过滤
+      // 才能靠路径匹配上这条记录：SEO文章走/:category/:detail两段式路由，
+      // 真实路径是/{category}/{detail}/；非SEO文章走/detail/:detail单段式
+      // 路由，routes()给它们生成的就是/detail/{纯数字id}/——这里path
+      // (=params.detail)在这种情况下访问到的本来就已经是这个纯id，两边
+      // 天然一致，不需要再额外解析一次
       if (process.server && process.static) {
         try {
           const fs = require("fs");
           const nodePath = require("path");
           const seoFlagsFile = nodePath.join(process.cwd(), ".seo-flags.jsonl");
-          fs.appendFileSync(seoFlagsFile, JSON.stringify({ path: `/detail/${path}/`, is_seo: data.is_seo }) + "\n");
+          const realPath =
+            data.is_seo && params.category
+              ? `/${params.category}/${path}/`
+              : `/detail/${path}/`;
+          fs.appendFileSync(seoFlagsFile, JSON.stringify({ path: realPath, is_seo: data.is_seo }) + "\n");
         } catch (e) {}
       }
 
