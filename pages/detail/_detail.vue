@@ -172,7 +172,7 @@ export default {
       try {
         [recNewsResponse, trendingNewsResponse, allResponse] = await Promise.all([
           $axios.$get("/api/article/menu", {
-            params: { site_id: env.SITE_ID, mod_id: "rec" }
+            params: { site_id: env.SITE_ID, mod_id: "rec", size: 20 }
           }).catch(() => null),
           $axios.$get("/api/article/get_all_articles", {
             params: { site_id: env.SITE_ID, size: 4, page: 1 }

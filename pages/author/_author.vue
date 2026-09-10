@@ -110,7 +110,7 @@ export default {
       try {
         const siteId = process.env.SITE_ID;
         const [rec, trending] = await Promise.all([
-          this.$axios.$get("/api/article/menu", { params: { site_id: siteId, mod_id: "rec" } }).catch(() => null),
+          this.$axios.$get("/api/article/menu", { params: { site_id: siteId, mod_id: "rec", size: 20 } }).catch(() => null),
           this.$axios.$get("/api/article/get_all_articles", { params: { site_id: siteId, size: 4, page: 1 } }).catch(() => null)
         ]);
         // 侧边栏这两个列表要过滤掉非SEO文章(投放落地页)，避免混进正常内容
