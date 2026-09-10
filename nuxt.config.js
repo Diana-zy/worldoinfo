@@ -23,7 +23,15 @@ export default {
         .map((item) => `/category/${item}/`);
       const detailPaths = path.data.detail
         .filter((item) => item && String(item).trim())
-        .map((item) => `/${item}/`);
+        .map((item) => {
+          const s = String(item).trim();
+          // SEO文章的item本身就是"分类/urlslug"这种带斜杠的组合，走两段式
+          // /:category/:detail路由（router.extendRoutes里注册的那条）；
+          // 非SEO文章(投放落地页)没有分类，item不带斜杠，得走
+          // pages/detail/_detail.vue默认文件路由/detail/:detail，这也正好
+          // 是ad_delivery投放链接实际在用的URL格式(/detail/{id}/?channel=...)
+          return s.includes("/") ? `/${s}/` : `/detail/${s}/`;
+        });
       const urls = [...categoryPaths, ...detailPaths];
       return urls;
     }
