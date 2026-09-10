@@ -65,7 +65,7 @@ export default {
         $axios.$get("/api/article/get_all_articles", {
           params: {
             site_id: env.SITE_ID,
-            size: 4,
+            size: 20,
             page: 1
           }
         }),
@@ -82,7 +82,7 @@ export default {
       // 展示、影响站点SEO效果。categoryInfo本身按seo_category_id查询，
       // 投放落地页没有分类，天然不会出现在这个列表里，不需要额外过滤
       if (recNewsResponse) recNewsResponse.list = filterSeoArticles(recNewsResponse.list);
-      if (trendingNewsResponse) trendingNewsResponse.list = filterSeoArticles(trendingNewsResponse.list);
+      if (trendingNewsResponse) trendingNewsResponse.list = filterSeoArticles(trendingNewsResponse.list).slice(0, 4);
       return {
         recNews: recNewsResponse,
         trendingNews: trendingNewsResponse,

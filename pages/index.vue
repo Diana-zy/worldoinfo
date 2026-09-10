@@ -66,7 +66,7 @@ export default {
           $axios.$get("/api/article/get_all_articles", {
             params: {
               site_id: env.SITE_ID,
-              size: 4,
+              size: 20,
               page: 1
             }
           }),
@@ -101,7 +101,7 @@ export default {
       // 首页展示的这几个列表都要过滤掉非SEO文章(投放落地页)，避免混进
       // 正常内容展示、影响站点SEO效果
       if (recNewsResponse) recNewsResponse.list = filterSeoArticles(recNewsResponse.list);
-      if (trendingNewsResponse) trendingNewsResponse.list = filterSeoArticles(trendingNewsResponse.list);
+      if (trendingNewsResponse) trendingNewsResponse.list = filterSeoArticles(trendingNewsResponse.list).slice(0, 4);
       if (allNewsResponse) allNewsResponse.list = filterSeoArticles(allNewsResponse.list);
       list = list && list.map((item) => {
         if (item) item.list = filterSeoArticles(item.list);

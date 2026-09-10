@@ -175,7 +175,7 @@ export default {
             params: { site_id: env.SITE_ID, mod_id: "rec", size: 20 }
           }).catch(() => null),
           $axios.$get("/api/article/get_all_articles", {
-            params: { site_id: env.SITE_ID, size: 4, page: 1 }
+            params: { site_id: env.SITE_ID, size: 20, page: 1 }
           }).catch(() => null),
           $axios.$get("/api/article/menu", {
             params: { site_id: env.SITE_ID, mod_id: "all", page: 1, size: 20 }
@@ -268,7 +268,7 @@ export default {
         id,
         htmlWithAnchor,
         recNews: filterSeoArticles(extractList(recNewsResponse)),
-        trendingNews: filterSeoArticles(extractList(trendingNewsResponse)),
+        trendingNews: filterSeoArticles(extractList(trendingNewsResponse)).slice(0, 4),
         articleFaqs
       };
     } catch (error) {
