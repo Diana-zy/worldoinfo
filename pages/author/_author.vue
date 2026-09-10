@@ -46,6 +46,7 @@ import RightSideBox from "../../components/RightSideBox";
 import FooterSeo from "../../components/FooterSeo";
 import Loading from "../../components/Loading";
 import { authorData } from "../../config/author-links";
+import { filterSeoArticles } from "../../utils/utils";
 
 export default {
   components: { AppHeader, RightSideBox, FooterSeo, Loading },
@@ -112,8 +113,10 @@ export default {
           this.$axios.$get("/api/article/menu", { params: { site_id: siteId, mod_id: "rec" } }).catch(() => null),
           this.$axios.$get("/api/article/get_all_articles", { params: { site_id: siteId, size: 4, page: 1 } }).catch(() => null)
         ]);
-        this.recNews = (rec && rec.list) || [];
-        this.trendingNews = (trending && trending.list) || [];
+        // 侧边栏这两个列表要过滤掉非SEO文章(投放落地页)，避免混进正常内容
+        // 展示、影响站点SEO效果
+        this.recNews = filterSeoArticles((rec && rec.list) || []);
+        this.trendingNews = filterSeoArticles((trending && trending.list) || []);
       } catch (e) {}
     }
   }

@@ -46,7 +46,7 @@
 <script>
 import { directive } from "vue-awesome-swiper";
 import "swiper/css/swiper.min.css";
-import { simulateAFSSearch } from "~/utils/utils";
+import { simulateAFSSearch, filterSeoArticles } from "~/utils/utils";
 
 export default {
   directives: {
@@ -97,6 +97,15 @@ export default {
         );
       });
       let list = await Promise.all(category);
+      // 首页展示的这几个列表都要过滤掉非SEO文章(投放落地页)，避免混进
+      // 正常内容展示、影响站点SEO效果
+      if (recNewsResponse) recNewsResponse.list = filterSeoArticles(recNewsResponse.list);
+      if (trendingNewsResponse) trendingNewsResponse.list = filterSeoArticles(trendingNewsResponse.list);
+      if (allNewsResponse) allNewsResponse.list = filterSeoArticles(allNewsResponse.list);
+      list = list && list.map((item) => {
+        if (item) item.list = filterSeoArticles(item.list);
+        return item;
+      });
       return {
         recNews: recNewsResponse,
         trendingNews: trendingNewsResponse,

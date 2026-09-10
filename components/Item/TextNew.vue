@@ -1,5 +1,5 @@
 <template>
-  <CustomLink class="news-style-2" :to="`/${item.path_v2}/`">
+  <CustomLink class="news-style-2" :to="buildArticleUrl(item.path_v2)">
     <div class="m-hidden-block">
       <NuxtImg
         format="auto"
@@ -30,7 +30,7 @@
 </template>
 
 <script>
-import { capitalizeFirstLetter } from "~/utils/utils";
+import { capitalizeFirstLetter, buildArticleUrl } from "~/utils/utils";
 export default {
   props: {
     item: {
@@ -40,7 +40,8 @@ export default {
   },
 
   methods: {
-    capitalizeFirstLetter
+    capitalizeFirstLetter,
+    buildArticleUrl
   }
 };
 </script>

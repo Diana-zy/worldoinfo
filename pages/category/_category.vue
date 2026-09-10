@@ -45,7 +45,7 @@
 </template>
 
 <script>
-import { capitalizeFirstLetter } from "~/utils/utils";
+import { capitalizeFirstLetter, filterSeoArticles, buildArticleUrl } from "~/utils/utils";
 
 export default {
   async asyncData({ $axios, params, env }) {
@@ -77,6 +77,11 @@ export default {
           }
         })
       ]);
+      // 侧边栏这两个列表要过滤掉非SEO文章(投放落地页)，避免混进正常内容
+      // 展示、影响站点SEO效果。categoryInfo本身按seo_category_id查询，
+      // 投放落地页没有分类，天然不会出现在这个列表里，不需要额外过滤
+      if (recNewsResponse) recNewsResponse.list = filterSeoArticles(recNewsResponse.list);
+      if (trendingNewsResponse) trendingNewsResponse.list = filterSeoArticles(trendingNewsResponse.list);
       return {
         recNews: recNewsResponse,
         trendingNews: trendingNewsResponse,
@@ -97,7 +102,7 @@ export default {
     const itemListElements = (this.categoryInfo && this.categoryInfo.list || []).map((item, index) => ({
       "@type": "ListItem",
       position: index + 1,
-      url: `https://www.worldoinfo.com/${item.path_v2}/`
+      url: `https://www.worldoinfo.com${buildArticleUrl(item.path_v2)}`
     }));
 
     return {

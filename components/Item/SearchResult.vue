@@ -1,5 +1,5 @@
 <template>
-  <CustomLink class="item" :to="`/${item.path_v2}/`">
+  <CustomLink class="item" :to="buildArticleUrl(item.path_v2)">
     <p class="title">{{ item.name }}</p>
     <p class="path">{{ formattedPath }}</p>
     <p class="desc">{{ item.first_paragraph }}</p>
@@ -7,6 +7,7 @@
 </template>
 
 <script>
+import { buildArticleUrl } from "~/utils/utils";
 export default {
   props: {
     item: {
@@ -14,9 +15,12 @@ export default {
       required: true
     }
   },
+  methods: {
+    buildArticleUrl
+  },
   computed: {
     formattedPath() {
-      return `${window.location.origin}/${this.item.path_v2}/`;
+      return `${window.location.origin}${buildArticleUrl(this.item.path_v2)}`;
     }
   }
 };
