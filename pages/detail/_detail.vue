@@ -18,7 +18,7 @@
             </div>
             <div class="news-detail first_paragraph">{{ newInfo.first_paragraph }}</div>
 
-            <div class="article-summary" v-if="newInfo.seo_desc">
+            <div class="article-summary" v-if="!isNonSeoArticle && newInfo.seo_desc">
               <div class="summary-header">
                 <div class="summary-icon">📋</div>
                 <h3 class="summary-title">Article Summary</h3>
@@ -27,7 +27,7 @@
             </div>
 
             <div id="relatedsearches1"> </div>
-            <aside class="toc-container" v-if="toc.length">
+            <aside class="toc-container" v-if="!isNonSeoArticle && toc.length">
               <h3 class="toc-title">Table of Contents</h3>
               <nav class="toc-nav">
                 <ul class="toc-list">
